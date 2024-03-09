@@ -1,7 +1,7 @@
 -- ----------------------------
 -- Table structure for hotel_chain
 -- ----------------------------
-DROP TABLE IF EXISTS hotel_chain;
+DROP TABLE IF EXISTS hotel_chain CASCADE;
 CREATE TABLE hotel_chain (
   id serial PRIMARY KEY,
   number_of_hotels int NOT NULL CHECK (number_of_hotels > 0),
@@ -18,7 +18,7 @@ INSERT INTO hotel_chain VALUES (1, 8, '22 Prince Street', ARRAY['hotel@hotel.com
 -- ----------------------------
 -- Table structure for hotel
 -- ----------------------------
-DROP TABLE IF EXISTS hotel;
+DROP TABLE IF EXISTS hotel CASCADE;
 CREATE TABLE IF NOT EXISTS hotel (
   id serial PRIMARY KEY,
   hotel_chain_id int NOT NULL REFERENCES hotel_chain(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -37,7 +37,7 @@ INSERT INTO hotel VALUES (1, 1, 3, 102, '49 Terrence Avenue', 'inn@inn.com', '12
 -- ----------------------------
 -- Table structure for room
 -- ----------------------------
-DROP TABLE IF EXISTS room;
+DROP TABLE IF EXISTS room CASCADE;
 CREATE TABLE room (
     id serial PRIMARY KEY,
     hotel_id int NOT NULL REFERENCES hotel(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -54,4 +54,21 @@ CREATE TABLE room (
 -- ----------------------------
 -- Records of room
 -- ----------------------------
-INSERT INTO room VALUES (1, 1, 1, 59, , 2, 'sea', 1, 0, 0);
+INSERT INTO room VALUES (1, 1, 1, 59, NULL, 2, 'sea', '1', '0', '0');
+
+-- ----------------------------
+-- Table structure for customer
+-- ----------------------------
+DROP TABLE IF EXISTS customer;
+CREATE TABLE customer (
+    id serial PRIMARY KEY,
+    full_name varchar NOT NULL,
+    address varchar(100),
+    id_type varchar(100) NOT NUll,
+    registration_date date NOT NULL
+);
+
+-- ----------------------------
+-- Records of customer
+-- ----------------------------
+INSERT INTO customer VALUES (1, 'John Doe', '72 East Street', 'SSN', '2024-01-01');
