@@ -91,3 +91,22 @@ CREATE TABLE employee (
 -- Records of employee
 -- ----------------------------
 INSERT INTO employee VALUES (1, 1, 1, '111111111', 'Henry Ford', '47 West Street', 'manager');
+
+-- ----------------------------
+-- Table structure for rent
+-- ----------------------------
+DROP TABLE IF EXISTS rent;
+CREATE TABLE rent (
+    customer_id int REFERENCES customer(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    room_id int REFERENCES room(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    hotel_id int REFERENCES hotel(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    hotel_chain_id int REFERENCES hotel_chain(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    start_date date NOT NULL,
+    end_date date NOT NULL CHECK (end_date > start_date),
+	PRIMARY KEY (customer_id, room_id, hotel_id, hotel_chain_id)
+);
+
+-- ----------------------------
+-- Records of rent
+-- ----------------------------
+INSERT INTO rent VALUES (1, 1, 1, 1, '2024-01-01', '2024-02-02');
