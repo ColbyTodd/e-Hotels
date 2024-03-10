@@ -37,7 +37,7 @@ INSERT INTO hotel VALUES (1, 1, 3, 102, '49 Terrence Avenue', 'inn@inn.com', '12
 -- ----------------------------
 -- Table structure for room
 -- ----------------------------
-DROP TABLE IF EXISTS room CASCADE;
+DROP TABLE IF EXISTS room;
 CREATE TABLE room (
     id serial PRIMARY KEY,
     hotel_id int NOT NULL REFERENCES hotel(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -72,3 +72,22 @@ CREATE TABLE customer (
 -- Records of customer
 -- ----------------------------
 INSERT INTO customer VALUES (1, 'John Doe', '72 East Street', 'SSN', '2024-01-01');
+
+-- ----------------------------
+-- Table structure for employee
+-- ----------------------------
+DROP TABLE IF EXISTS employee;
+CREATE TABLE employee (
+    id serial PRIMARY KEY,
+    hotel_id int NOT NULL REFERENCES hotel(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    hotel_chain_id int NOT NULL REFERENCES hotel_chain(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    sin varchar(9) NOT NULL,
+    full_name varchar(100) NOT NULL,
+    address varchar(100) NOT NULL,
+    role varchar(100) NOT NULL
+);
+
+-- ----------------------------
+-- Records of employee
+-- ----------------------------
+INSERT INTO employee VALUES (1, 1, 1, '111111111', 'Henry Ford', '47 West Street', 'manager');
