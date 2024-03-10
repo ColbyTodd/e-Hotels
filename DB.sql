@@ -110,3 +110,19 @@ CREATE TABLE rent (
 -- Records of rent
 -- ----------------------------
 INSERT INTO rent VALUES (1, 1, 1, 1, '2024-01-01', '2024-02-02');
+
+-- ----------------------------
+-- Table structure for manager
+-- ----------------------------
+DROP TABLE IF EXISTS manager;
+CREATE TABLE manager (
+    employee_id int REFERENCES employee(id) ON DELETE CASCADE, ON UPDATE CASCADE,
+    hotel_id int REFERENCES hotel(id) ON DELETE CASCADE, ON UPDATE CASCADE,
+    hotel_chain_id int REFERENCES hotel_chain(id) ON DELETE CASCADE, ON UPDATE CASCADE,
+    PRIMARY KEY (employee_id, hotel_id, hotel_chain_id)
+);
+
+-- ----------------------------
+-- Records of manager
+-- ----------------------------
+INSERT INTO manager VALUES (1, 1, 1);
