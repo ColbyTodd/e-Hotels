@@ -115,7 +115,7 @@ CREATE TABLE rent (
 -- ----------------------------
 -- Records of rent
 -- ----------------------------
-INSERT INTO rent VALUES (1, 1, 1, 1, '2024-01-01', '2024-02-02');
+INSERT INTO rent VALUES (1, 1, 1, 1, 1, '2024-01-01', '2024-02-02');
 
 -- ----------------------------
 -- Table structure for manager
