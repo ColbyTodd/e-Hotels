@@ -27,13 +27,14 @@ CREATE TABLE IF NOT EXISTS hotel (
   address varchar(100) NOT NULL,
   email varchar(100) NOT NULL CHECK (email LIKE '_%@_%._%'),
   phone varchar(10) NOT NULL,
+  city varchar(100) NOT NULL,
   PRIMARY KEY (id, hotel_chain_id)
 );
 
 -- ----------------------------
 -- Records of hotel
 -- ----------------------------
-INSERT INTO hotel VALUES (1, 1, 3, 102, '49 Terrence Avenue', 'inn@inn.com', '1231231234');
+INSERT INTO hotel VALUES (1, 1, 3, 102, '49 Terrence Avenue', 'inn@inn.com', '1231231234', 'Ottawa');
 
 -- ----------------------------
 -- Table structure for room
@@ -101,19 +102,20 @@ INSERT INTO employee VALUES (1, 1, 1, '111111111', 'Henry Ford', '47 West Street
 -- ----------------------------
 DROP TABLE IF EXISTS rent;
 CREATE TABLE rent (
+    id serial,
     customer_id int REFERENCES customer(id) ON DELETE NO ACTION ON UPDATE CASCADE,
     room_id int REFERENCES room(id) ON DELETE NO ACTION ON UPDATE CASCADE,
     hotel_id int REFERENCES hotel(id) ON DELETE NO ACTION ON UPDATE CASCADE,
     hotel_chain_id int REFERENCES hotel_chain(id) ON DELETE NO ACTION ON UPDATE CASCADE,
     start_date date NOT NULL,
     end_date date NOT NULL CHECK (end_date > start_date),
-	PRIMARY KEY (customer_id, room_id, hotel_id, hotel_chain_id)
+	PRIMARY KEY (id, customer_id, room_id, hotel_id, hotel_chain_id)
 );
 
 -- ----------------------------
 -- Records of rent
 -- ----------------------------
-INSERT INTO rent VALUES (1, 1, 1, 1, '2024-01-01', '2024-02-02');
+INSERT INTO rent VALUES (1, 1, 1, 1, 1, '2024-01-01', '2024-02-02');
 
 -- ----------------------------
 -- Table structure for manager
