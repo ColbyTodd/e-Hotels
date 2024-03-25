@@ -5,15 +5,45 @@ DROP TABLE IF EXISTS hotel_chain CASCADE;
 CREATE TABLE hotel_chain (
   id serial PRIMARY KEY,
   number_of_hotels int NOT NULL CHECK (number_of_hotels > 0),
-  address_of_central_offices varchar(100) NOT NULL,
-  email_addresses varchar(100)[] NOT NULL,
-  phone_numbers varchar(10)[] NOT NULL
+  address_of_central_offices varchar(100) NOT NULL
 );
 
 -- ----------------------------
 -- Records of hotel_chain
 -- ----------------------------
-INSERT INTO hotel_chain VALUES (1, 8, '22 Prince Street', ARRAY['hotel@hotel.com', 'guestservices@hotel.com'], ARRAY['5555555555', '7777777777']);
+INSERT INTO hotel_chain VALUES (1, 8, '22 Prince Street');
+
+-- ----------------------------
+-- Table structure for hotel_chain_email
+-- ----------------------------
+DROP TABLE IF EXISTS hotel_chain_email CASCADE;
+CREATE TABLE hotel_chain_email (
+  id serial PRIMARY KEY,
+  hotel_chain_id int NOT NULL REFERENCES hotel_chain(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  email varchar(100) NOT NULL CHECK (email LIKE '_%@_%._%')
+);
+
+-- ----------------------------
+-- Records of hotel_chain_email
+-- ----------------------------
+INSERT INTO hotel_chain_email VALUES (1, 1, 'hotel@hotel.com');
+INSERT INTO hotel_chain_email VALUES (2, 1, 'guestservices@hotel.com');
+
+-- ----------------------------
+-- Table structure for hotel_chain_phone
+-- ----------------------------
+DROP TABLE IF EXISTS hotel_chain_phone CASCADE;
+CREATE TABLE hotel_chain_phone (
+  id serial PRIMARY KEY,
+  hotel_chain_id int NOT NULL REFERENCES hotel_chain(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  phone varchar(10) NOT NULL
+);
+
+-- ----------------------------
+-- Records of hotel_chain_phone
+-- ----------------------------
+INSERT INTO hotel_chain_phone VALUES (1, 1, '5555555555');
+INSERT INTO hotel_chain_phone VALUES (2, 1, '7777777777');
 
 -- ----------------------------
 -- Table structure for hotel
