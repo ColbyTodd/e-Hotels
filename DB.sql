@@ -82,7 +82,7 @@ CREATE TABLE room (
     room_view varchar(8) CHECK (room_view = 'sea' OR room_view = 'mountain'),
     extendable bit NOT NULL,
     problems bit NOT NULL,
-    room_status bit NOT NULL,
+    status bit NOT NULL,
     PRIMARY KEY (id, hotel_id, hotel_chain_id)
 );
 
