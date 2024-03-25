@@ -4,6 +4,7 @@
 DROP TABLE IF EXISTS hotel_chain CASCADE;
 CREATE TABLE hotel_chain (
   id serial PRIMARY KEY,
+  name varchar(100) NOT NULL,
   number_of_hotels int NOT NULL CHECK (number_of_hotels > 0),
   address_of_central_offices varchar(100) NOT NULL
 );
@@ -11,7 +12,7 @@ CREATE TABLE hotel_chain (
 -- ----------------------------
 -- Records of hotel_chain
 -- ----------------------------
-INSERT INTO hotel_chain VALUES (1, 8, '22 Prince Street');
+INSERT INTO hotel_chain VALUES (1, 'Mariott', 8, '22 Prince Street');
 
 -- ----------------------------
 -- Table structure for hotel_chain_email
@@ -52,6 +53,7 @@ DROP TABLE IF EXISTS hotel CASCADE;
 CREATE TABLE IF NOT EXISTS hotel (
   id serial UNIQUE,
   hotel_chain_id int NOT NULL REFERENCES hotel_chain(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  name varchar(100) NOT NULL,
   category int NOT NULL CHECK (category > 0 and category <= 5),
   number_of_rooms int NOT NULL CHECK (number_of_rooms > 0),
   address varchar(100) NOT NULL,
@@ -64,7 +66,7 @@ CREATE TABLE IF NOT EXISTS hotel (
 -- ----------------------------
 -- Records of hotel
 -- ----------------------------
-INSERT INTO hotel VALUES (1, 1, 3, 102, '49 Terrence Avenue', 'inn@inn.com', '1231231234', 'Ottawa');
+INSERT INTO hotel VALUES (1, 1, 'Hampton', 3, 102, '49 Terrence Avenue', 'inn@inn.com', '1231231234', 'Ottawa');
 
 -- ----------------------------
 -- Table structure for room
