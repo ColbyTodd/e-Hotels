@@ -20,8 +20,9 @@ INSERT INTO hotel_chain VALUES (1, 'Mariott', 8, '22 Prince Street');
 DROP TABLE IF EXISTS hotel_chain_email CASCADE;
 CREATE TABLE hotel_chain_email (
   id serial PRIMARY KEY,
-  hotel_chain_id int NOT NULL REFERENCES hotel_chain(id) ON DELETE CASCADE ON UPDATE CASCADE,
-  email varchar(100) NOT NULL CHECK (email LIKE '_%@_%._%')
+  hotel_chain_id int NOT NULL,
+  email varchar(100) NOT NULL CHECK (email LIKE '_%@_%._%'),
+  FOREIGN KEY (hotel_chain_id) REFERENCES hotel_chain(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- ----------------------------
@@ -36,8 +37,9 @@ INSERT INTO hotel_chain_email VALUES (2, 1, 'guestservices@hotel.com');
 DROP TABLE IF EXISTS hotel_chain_phone CASCADE;
 CREATE TABLE hotel_chain_phone (
   id serial PRIMARY KEY,
-  hotel_chain_id int NOT NULL REFERENCES hotel_chain(id) ON DELETE CASCADE ON UPDATE CASCADE,
-  phone varchar(10) NOT NULL
+  hotel_chain_id int NOT NULL,
+  phone varchar(10) NOT NULL,
+  FOREIGN KEY (hotel_chain_id) REFERENCES hotel_chain(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- ----------------------------
@@ -141,13 +143,14 @@ CREATE TABLE rent (
     hotel_chain_id int REFERENCES hotel_chain(id) ON DELETE NO ACTION ON UPDATE CASCADE,
     start_date date NOT NULL,
     end_date date NOT NULL CHECK (end_date > start_date),
+    payment varchar(5) CHECK (payment = 'card' OR payment = 'cash'),
 	PRIMARY KEY (id, customer_id, room_id, hotel_id, hotel_chain_id)
 );
 
 -- ----------------------------
 -- Records of rent
 -- ----------------------------
-INSERT INTO rent VALUES (1, 1, 1, 1, 1, '2024-01-01', '2024-02-02');
+INSERT INTO rent VALUES (1, 1, 1, 1, 1, '2024-01-01', '2024-02-02', 'card');
 
 -- ----------------------------
 -- Table structure for manager
