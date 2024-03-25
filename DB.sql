@@ -12,7 +12,11 @@ CREATE TABLE hotel_chain (
 -- ----------------------------
 -- Records of hotel_chain
 -- ----------------------------
-INSERT INTO hotel_chain VALUES (1, 'Mariott', 8, '22 Prince Street');
+insert into hotel_chain (id, name, number_of_hotels, address_of_central_offices) values (1, 'Bogisich LLC', 10, '81396 Kings Crossing');
+insert into hotel_chain (id, name, number_of_hotels, address_of_central_offices) values (2, 'Kunde LLC', 11, '458 Clove Center');
+insert into hotel_chain (id, name, number_of_hotels, address_of_central_offices) values (3, 'Stamm, Bins and Hirthe', 12, '92044 Village Alley');
+insert into hotel_chain (id, name, number_of_hotels, address_of_central_offices) values (4, 'Vandervort, Leannon and Koelpin', 9, '5 Rowland Court');
+insert into hotel_chain (id, name, number_of_hotels, address_of_central_offices) values (5, 'Price, Schulist and Gusikowski', 9, '033 Kropf Circle');
 
 -- ----------------------------
 -- Table structure for hotel_chain_email
