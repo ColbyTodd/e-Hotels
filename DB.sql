@@ -12,11 +12,11 @@ CREATE TABLE hotel_chain (
 -- ----------------------------
 -- Records of hotel_chain
 -- ----------------------------
-insert into hotel_chain (id, name, number_of_hotels, address_of_central_offices) values (1, 'Bogisich LLC', 10, '81396 Kings Crossing');
-insert into hotel_chain (id, name, number_of_hotels, address_of_central_offices) values (2, 'Kunde LLC', 11, '458 Clove Center');
-insert into hotel_chain (id, name, number_of_hotels, address_of_central_offices) values (3, 'Stamm, Bins and Hirthe', 12, '92044 Village Alley');
-insert into hotel_chain (id, name, number_of_hotels, address_of_central_offices) values (4, 'Vandervort, Leannon and Koelpin', 9, '5 Rowland Court');
-insert into hotel_chain (id, name, number_of_hotels, address_of_central_offices) values (5, 'Price, Schulist and Gusikowski', 9, '033 Kropf Circle');
+insert into hotel_chain (id, name, number_of_hotels, address_of_central_offices) values (1, 'Bogisich LLC', 8, '81396 Kings Crossing');
+insert into hotel_chain (id, name, number_of_hotels, address_of_central_offices) values (2, 'Kunde LLC', 8, '458 Clove Center');
+insert into hotel_chain (id, name, number_of_hotels, address_of_central_offices) values (3, 'Stamm, Bins and Hirthe', 8, '92044 Village Alley');
+insert into hotel_chain (id, name, number_of_hotels, address_of_central_offices) values (4, 'Vandervort, Leannon and Koelpin', 8, '5 Rowland Court');
+insert into hotel_chain (id, name, number_of_hotels, address_of_central_offices) values (5, 'Price, Schulist and Gusikowski', 8, '033 Kropf Circle');
 
 -- ----------------------------
 -- Table structure for hotel_chain_email
@@ -65,7 +65,7 @@ DROP TABLE IF EXISTS hotel_chain_phone CASCADE;
 CREATE TABLE hotel_chain_phone (
   id serial PRIMARY KEY,
   hotel_chain_id int NOT NULL,
-  phone varchar(10) NOT NULL,
+  phone varchar(10) NOT NULL CHECK (phone SIMILAR TO '[0-9]{10}'),
   FOREIGN KEY (hotel_chain_id) REFERENCES hotel_chain(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS hotel (
   number_of_rooms int NOT NULL CHECK (number_of_rooms > 0),
   address varchar(100) NOT NULL,
   email varchar(100) NOT NULL CHECK (email LIKE '_%@_%._%'),
-  phone varchar(10) NOT NULL,
+  phone varchar(10) NOT NULL CHECK (phone SIMILAR TO '[0-9]{10}'),
   city varchar(100) NOT NULL,
   PRIMARY KEY (id, hotel_chain_id)
 );
@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS hotel (
 -- ----------------------------
 -- Records of hotel
 -- ----------------------------
-INSERT INTO hotel VALUES (1, 1, 'Hampton', 3, 102, '49 Terrence Avenue', 'inn@inn.com', '1231231234', 'Ottawa');
+insert into hotel (id, hotel_chain_id, name, category, number_of_rooms, address, email, phone, city) values (1, 1, 'Stronghold', 4, 20, '2 Springview Plaza', 'hrendbaek0@disqus.com', '2221113233', 'Topi');
 
 -- ----------------------------
 -- Table structure for room
