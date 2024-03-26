@@ -26,10 +26,8 @@ public class RoomService {
                         rs.getString("room_view"),
                         rs.getBoolean("extendable"),
                         rs.getBoolean("problems"),
-                        rs.getBoolean("room_status")));
+                        rs.getBoolean("status")));
             }
-        } catch (SQLException e) {
-            throw new Exception("Error while retrieving rooms: " + e.getMessage());
         } finally {
             db.close();
         }
@@ -47,7 +45,7 @@ public class RoomService {
             stmt.setString(6, room.getRoomView());
             stmt.setBoolean(7, room.getExtendable());
             stmt.setBoolean(8, room.getProblems());
-            stmt.setBoolean(9, room.getRoomStatus());
+            stmt.setBoolean(9, room.getStatus());
             stmt.executeUpdate();
             return "Room created successfully!";
         } catch (SQLException e) {
@@ -66,7 +64,7 @@ public class RoomService {
             stmt.setString(6, room.getRoomView());
             stmt.setBoolean(7, room.getExtendable());
             stmt.setBoolean(8, room.getProblems());
-            stmt.setBoolean(9, room.getRoomStatus());
+            stmt.setBoolean(9, room.getStatus());
             stmt.setInt(10, room.getId());
             stmt.executeUpdate();
             return "Room updated successfully!";

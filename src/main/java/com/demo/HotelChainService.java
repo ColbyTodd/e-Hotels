@@ -1,4 +1,3 @@
-
 package com.demo;
 
 import java.sql.Connection;
@@ -18,13 +17,10 @@ public class HotelChainService {
             while (rs.next()) {
                 hotelChains.add(new HotelChain(
                         rs.getInt("id"),
+                        rs.getString("name"),
                         rs.getInt("number_of_hotels"),
-                        rs.getString("address_of_central_offices"),
-                        (String[])rs.getArray("email_addresses").getArray(),
-                        (String[])rs.getArray("phone_numbers").getArray()));
+                        rs.getString("address_of_central_offices")));
             }
-        } catch (SQLException e) {
-            throw new Exception("Error while retrieving hotel chains: " + e.getMessage());
         } finally {
             db.close();
         }
@@ -32,12 +28,11 @@ public class HotelChainService {
     }
 
     public String createHotelChain(HotelChain hotelChain) throws Exception {
-        String sql = "INSERT INTO hotel_chain (number_of_hotels, address_of_central_offices, email_addresses, phone_numbers) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO hotel_chain (name, number_of_hotels, address_of_central_offices) VALUES (?, ?, ?)";
         try (Connection con = db.getConnection(); PreparedStatement stmt = con.prepareStatement(sql)) {
-            stmt.setInt(1, hotelChain.getNumberOfHotels());
-            stmt.setString(2, hotelChain.getAddressOfCentralOffices());
-            stmt.setArray(3, con.createArrayOf("VARCHAR", hotelChain.getEmailAddresses()));
-            stmt.setArray(4, con.createArrayOf("VARCHAR", hotelChain.getPhoneNumbers()));
+            stmt.setString(1, hotelChain.getName());
+            stmt.setInt(2, hotelChain.getNumberOfHotels());
+            stmt.setString(3, hotelChain.getAddressOfCentralOffices());
             stmt.executeUpdate();
             return "HotelChain created successfully!";
         } catch (SQLException e) {
@@ -46,13 +41,12 @@ public class HotelChainService {
     }
 
     public String updateHotelChain(HotelChain hotelChain) throws Exception {
-        String sql = "UPDATE hotel_chain SET number_of_hotels=?, address_of_central_offices=?, email_addresses=?, phone_numbers=? WHERE id=?";
+        String sql = "UPDATE hotel_chain SET name=?, number_of_hotels=?, address_of_central_offices=? WHERE id=?";
         try (Connection con = db.getConnection(); PreparedStatement stmt = con.prepareStatement(sql)) {
-            stmt.setInt(1, hotelChain.getNumberOfHotels());
-            stmt.setString(2, hotelChain.getAddressOfCentralOffices());
-            stmt.setArray(3, con.createArrayOf("VARCHAR", hotelChain.getEmailAddresses()));
-            stmt.setArray(4, con.createArrayOf("VARCHAR", hotelChain.getPhoneNumbers()));
-            stmt.setInt(5, hotelChain.getId());
+            stmt.setString(1, hotelChain.getName());
+            stmt.setInt(2, hotelChain.getNumberOfHotels());
+            stmt.setString(3, hotelChain.getAddressOfCentralOffices());
+            stmt.setInt(4, hotelChain.getId());
             stmt.executeUpdate();
             return "HotelChain updated successfully!";
         } catch (SQLException e) {

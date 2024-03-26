@@ -15,6 +15,7 @@ public class Rent {
     private Integer hotelChainId;
     private Date startDate;
     private Date endDate;
+    private String payment;
 
     /**
      * Constructor for Rent object.
@@ -28,9 +29,10 @@ public class Rent {
      * @param hotelChainId Identifier for the hotel chain of the rented room.
      * @param startDate Start date of the rent period.
      * @param endDate End date of the rent period.
+     * @param payment paymentType.
      */
 
-    public Rent(Integer id, Integer customerId, Integer roomId, Integer hotelId, Integer hotelChainId, Date startDate, Date endDate) {
+    public Rent(Integer id, Integer customerId, Integer roomId, Integer hotelId, Integer hotelChainId, Date startDate, Date endDate, String payment) {
         this.id = id;
         this.customerId = customerId;
         this.roomId = roomId;
@@ -38,6 +40,7 @@ public class Rent {
         this.hotelChainId = hotelChainId;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.payment = payment;
     }
 
     // Getters and Setters
@@ -55,6 +58,9 @@ public class Rent {
     public void setStartDate(Date startDate) { this.startDate = startDate; }
     public Date getEndDate() { return endDate; }
     public void setEndDate(Date endDate) { this.endDate = endDate; }
+    public String getPayment() { return payment; } // Getter for new field
+    public void setPayment(String payment) { this.payment = payment; } // Setter for new field
+
 
     @Override
     public String toString() {
@@ -66,6 +72,7 @@ public class Rent {
                 ", hotelChainId=" + hotelChainId +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
+                ", payment='" + payment + '\'' +
                 '}';
     }
 }

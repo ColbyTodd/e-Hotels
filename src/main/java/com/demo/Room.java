@@ -16,7 +16,7 @@ public class Room {
     private String roomView;
     private Boolean extendable;
     private Boolean problems;
-    private Boolean roomStatus;
+    private Boolean status;
 
     /**
      * Constructor for Room object.
@@ -32,10 +32,10 @@ public class Room {
      * @param roomView Type of view from the room (e.g., sea or mountain).
      * @param extendable Flag indicating if the room can be extended.
      * @param problems Flag indicating if there are any reported problems.
-     * @param roomStatus Flag indicating the current status of the room.
+     * @param status Flag indicating the current status of the room.
      */
 
-    public Room(Integer id, Integer hotelId, Integer hotelChainId, Integer price, String amenities, Integer capacity, String roomView, Boolean extendable, Boolean problems, Boolean roomStatus) {
+    public Room(Integer id, Integer hotelId, Integer hotelChainId, Integer price, String amenities, Integer capacity, String roomView, Boolean extendable, Boolean problems, Boolean status) {
         this.id = id;
         this.hotelId = hotelId;
         this.hotelChainId = hotelChainId;
@@ -45,7 +45,7 @@ public class Room {
         this.roomView = roomView;
         this.extendable = extendable;
         this.problems = problems;
-        this.roomStatus = roomStatus;
+        this.status = status;
     }
 
     // Getters and Setters
@@ -67,8 +67,8 @@ public class Room {
     public void setExtendable(Boolean extendable) { this.extendable = extendable; }
     public Boolean getProblems() { return problems; }
     public void setProblems(Boolean problems) { this.problems = problems; }
-    public Boolean getRoomStatus() { return roomStatus; }
-    public void setRoomStatus(Boolean roomStatus) { this.roomStatus = roomStatus; }
+    public Boolean getStatus() { return status; }
+    public void setStatus(Boolean status) { this.status = status; }
 
     @Override
     public String toString() {
@@ -82,7 +82,7 @@ public class Room {
                 ", roomView='" + roomView + '\'' +
                 ", extendable=" + extendable +
                 ", problems=" + problems +
-                ", roomStatus=" + roomStatus +
+                ", status=" + status +
                 '}';
     }
 }

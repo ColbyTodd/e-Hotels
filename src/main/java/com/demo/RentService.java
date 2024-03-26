@@ -23,10 +23,9 @@ public class RentService {
                         rs.getInt("hotel_id"),
                         rs.getInt("hotel_chain_id"),
                         rs.getDate("start_date"),
-                        rs.getDate("end_date")));
+                        rs.getDate("end_date"),
+                        rs.getString("payment"))); // Add the new 'payment' field handling
             }
-        } catch (SQLException e) {
-            throw new Exception("Error while retrieving rents: " + e.getMessage());
         } finally {
             db.close();
         }
