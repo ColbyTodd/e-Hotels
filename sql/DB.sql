@@ -1357,15 +1357,18 @@ insert into employee (id, hotel_id, hotel_chain_id, sin, full_name, address, rol
 -- ----------------------------
 DROP TABLE IF EXISTS rent;
 CREATE TABLE rent (
-    id serial,
-    customer_id int REFERENCES customer(id) ON DELETE NO ACTION ON UPDATE CASCADE,
-    room_id int REFERENCES room(id) ON DELETE NO ACTION ON UPDATE CASCADE,
-    hotel_id int REFERENCES hotel(id) ON DELETE NO ACTION ON UPDATE CASCADE,
-    hotel_chain_id int REFERENCES hotel_chain(id) ON DELETE NO ACTION ON UPDATE CASCADE,
+    id serial PRIMARY KEY,
+    customer_id int,
+    room_id int,
+    hotel_id int,
+    hotel_chain_id int,
     start_date date NOT NULL,
     end_date date NOT NULL CHECK (end_date > start_date),
     payment varchar(5) CHECK (payment = 'card' OR payment = 'cash'),
-	PRIMARY KEY (id, customer_id, room_id, hotel_id, hotel_chain_id)
+    FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (room_id) REFERENCES room(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (hotel_id) REFERENCES hotel(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (hotel_chain_id) REFERENCES hotel_chain(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- ----------------------------
@@ -2426,3 +2429,39 @@ insert into manager (employee_id, hotel_id, hotel_chain_id) values (37, 37, 2);
 insert into manager (employee_id, hotel_id, hotel_chain_id) values (38, 38, 3);
 insert into manager (employee_id, hotel_id, hotel_chain_id) values (39, 39, 4);
 insert into manager (employee_id, hotel_id, hotel_chain_id) values (40, 40, 5);
+
+-- ----------------------------
+-- View of Available Rooms by Area
+-- ----------------------------
+DROP VIEW IF EXISTS available_rooms_by_area;
+CREATE VIEW available_rooms_by_area AS
+SELECT city, count(status) FROM room
+INNER JOIN hotel
+ON room.hotel_id = hotel.id
+WHERE status = false
+GROUP BY city;
+
+-- ----------------------------
+-- View of Hotel Capacity
+-- ----------------------------
+DROP VIEW IF EXISTS hotel_capacity;
+CREATE VIEW hotel_capacity AS
+SELECT hotel.id, hotel.name, SUM(capacity) FROM room
+INNER JOIN hotel
+ON room.hotel_id = hotel.id
+GROUP BY hotel.id, hotel.name
+ORDER BY hotel.id;
+
+-- ----------------------------
+-- Index of Room Table
+-- ----------------------------
+DROP INDEX IF EXISTS room_index;
+CREATE INDEX room_index
+ON room (hotel_id, price, capacity, status);
+
+-- ----------------------------
+-- Index of Rent Table
+-- ----------------------------
+DROP INDEX IF EXISTS rent_index;
+CREATE INDEX rent_index
+ON rent (room_id, hotel_id, start_date, end_date);
