@@ -384,14 +384,113 @@ CREATE TABLE customer (
     id serial PRIMARY KEY,
     full_name varchar NOT NULL,
     address varchar(100),
-    id_type varchar(100) NOT NUll,
+    id_type varchar(100) NOT NUll CHECK (id_type LIKE 'SSN' OR id_type LIKE 'SIN' OR id_type LIKE 'driving licence'),
     registration_date date NOT NULL
 );
 
 -- ----------------------------
 -- Records of customer
 -- ----------------------------
-INSERT INTO customer VALUES (1, 'John Doe', '72 East Street', 'SSN', '2024-01-01');
+insert into customer (id, full_name, address, id_type, registration_date) values (1, 'Chrotoem Ivashev', '89 Heffernan Pass', 'driving licence', '2024-01-23');
+insert into customer (id, full_name, address, id_type, registration_date) values (2, 'Gibby Meade', '4 Sullivan Plaza', 'SSN', '2023-05-15');
+insert into customer (id, full_name, address, id_type, registration_date) values (3, 'Hailey Ashlin', '2 Lien Hill', 'SIN', '2023-09-15');
+insert into customer (id, full_name, address, id_type, registration_date) values (4, 'Frieda Doick', '5 Jenifer Place', 'SIN', '2023-01-16');
+insert into customer (id, full_name, address, id_type, registration_date) values (5, 'Elonore Rodell', '479 Old Shore Way', 'SSN', '2022-09-09');
+insert into customer (id, full_name, address, id_type, registration_date) values (6, 'Chico Manuello', '00038 Badeau Point', 'SIN', '2022-11-10');
+insert into customer (id, full_name, address, id_type, registration_date) values (7, 'Sarene Scutter', '7876 Eggendart Pass', 'SSN', '2023-07-21');
+insert into customer (id, full_name, address, id_type, registration_date) values (8, 'Alanna Allbones', '88 Bluejay Pass', 'driving licence', '2023-11-29');
+insert into customer (id, full_name, address, id_type, registration_date) values (9, 'Hephzibah Jossel', '94 Green Ridge Point', 'SSN', '2024-03-06');
+insert into customer (id, full_name, address, id_type, registration_date) values (10, 'Malvina Hughman', '2 Prairieview Court', 'SIN', '2023-08-21');
+insert into customer (id, full_name, address, id_type, registration_date) values (11, 'Hanni Vannucci', '6 Mendota Avenue', 'driving licence', '2023-09-27');
+insert into customer (id, full_name, address, id_type, registration_date) values (12, 'Ines Romao', '592 Glacier Hill Plaza', 'SSN', '2023-01-29');
+insert into customer (id, full_name, address, id_type, registration_date) values (13, 'Kamila Staite', '3 Carberry Circle', 'driving licence', '2022-08-16');
+insert into customer (id, full_name, address, id_type, registration_date) values (14, 'Quincey Egan', '51 Ruskin Place', 'SSN', '2022-09-03');
+insert into customer (id, full_name, address, id_type, registration_date) values (15, 'Binny Starkings', '60 Kingsford Alley', 'SSN', '2024-02-26');
+insert into customer (id, full_name, address, id_type, registration_date) values (16, 'Aubrey Race', '4 Red Cloud Alley', 'driving licence', '2024-02-25');
+insert into customer (id, full_name, address, id_type, registration_date) values (17, 'Welbie Soutar', '9732 Canary Road', 'driving licence', '2024-01-28');
+insert into customer (id, full_name, address, id_type, registration_date) values (18, 'Devland Durnan', '16 Hoffman Street', 'SSN', '2023-06-19');
+insert into customer (id, full_name, address, id_type, registration_date) values (19, 'Jillayne Dabes', '19450 Beilfuss Parkway', 'SSN', '2024-02-25');
+insert into customer (id, full_name, address, id_type, registration_date) values (20, 'Rollin Thorne', '816 Utah Trail', 'SSN', '2022-11-24');
+insert into customer (id, full_name, address, id_type, registration_date) values (21, 'Marika Curness', '9542 Continental Place', 'SSN', '2022-12-18');
+insert into customer (id, full_name, address, id_type, registration_date) values (22, 'Papagena Backs', '68707 Old Shore Way', 'driving licence', '2024-02-01');
+insert into customer (id, full_name, address, id_type, registration_date) values (23, 'Siward Sarjant', '4 Oriole Avenue', 'SIN', '2023-06-30');
+insert into customer (id, full_name, address, id_type, registration_date) values (24, 'Fallon Havick', '06 Victoria Drive', 'SIN', '2023-03-24');
+insert into customer (id, full_name, address, id_type, registration_date) values (25, 'Zechariah Musker', '6736 John Wall Lane', 'SSN', '2024-01-18');
+insert into customer (id, full_name, address, id_type, registration_date) values (26, 'Zandra Bearfoot', '6516 Sutherland Plaza', 'SSN', '2023-06-03');
+insert into customer (id, full_name, address, id_type, registration_date) values (27, 'Win McGiven', '734 Arrowood Alley', 'SSN', '2022-10-10');
+insert into customer (id, full_name, address, id_type, registration_date) values (28, 'Dorthea Overington', '61311 Di Loreto Place', 'driving licence', '2023-01-01');
+insert into customer (id, full_name, address, id_type, registration_date) values (29, 'Brander Melhuish', '7821 Warrior Junction', 'driving licence', '2023-11-11');
+insert into customer (id, full_name, address, id_type, registration_date) values (30, 'Amata Gleasane', '76069 Sunbrook Junction', 'driving licence', '2022-08-25');
+insert into customer (id, full_name, address, id_type, registration_date) values (31, 'Elly Alexandersen', '1817 John Wall Terrace', 'SSN', '2022-09-29');
+insert into customer (id, full_name, address, id_type, registration_date) values (32, 'Eada De Biaggi', '89 Farragut Road', 'SSN', '2023-02-13');
+insert into customer (id, full_name, address, id_type, registration_date) values (33, 'Charline Doiley', '34390 Portage Street', 'SIN', '2023-03-03');
+insert into customer (id, full_name, address, id_type, registration_date) values (34, 'Veradis Cissen', '23062 Continental Point', 'driving licence', '2022-08-21');
+insert into customer (id, full_name, address, id_type, registration_date) values (35, 'Lev Aloigi', '43941 Ruskin Court', 'SSN', '2023-06-25');
+insert into customer (id, full_name, address, id_type, registration_date) values (36, 'Tiphany O''Shee', '0 Golden Leaf Way', 'SSN', '2024-03-17');
+insert into customer (id, full_name, address, id_type, registration_date) values (37, 'Phillipe Tant', '3 Melody Street', 'SIN', '2024-01-31');
+insert into customer (id, full_name, address, id_type, registration_date) values (38, 'Aluin MacCaughen', '311 Gina Hill', 'driving licence', '2023-12-29');
+insert into customer (id, full_name, address, id_type, registration_date) values (39, 'Poppy Hincham', '5084 Autumn Leaf Avenue', 'SIN', '2023-08-01');
+insert into customer (id, full_name, address, id_type, registration_date) values (40, 'Brent Staples', '445 Morningstar Parkway', 'SSN', '2023-03-10');
+insert into customer (id, full_name, address, id_type, registration_date) values (41, 'Giffy Schach', '97871 Carberry Point', 'SSN', '2022-11-19');
+insert into customer (id, full_name, address, id_type, registration_date) values (42, 'Nev Wretham', '3 Northridge Parkway', 'driving licence', '2024-01-13');
+insert into customer (id, full_name, address, id_type, registration_date) values (43, 'Igor Bisseker', '03 Dorton Circle', 'SSN', '2023-06-24');
+insert into customer (id, full_name, address, id_type, registration_date) values (44, 'Price Roston', '65251 Sunbrook Road', 'driving licence', '2023-05-07');
+insert into customer (id, full_name, address, id_type, registration_date) values (45, 'Mordecai Frodsham', '57 Northland Crossing', 'SIN', '2023-05-19');
+insert into customer (id, full_name, address, id_type, registration_date) values (46, 'Hermon Probbings', '7 Farwell Lane', 'SIN', '2022-07-30');
+insert into customer (id, full_name, address, id_type, registration_date) values (47, 'Trenton Romanelli', '250 Rowland Parkway', 'SSN', '2023-05-06');
+insert into customer (id, full_name, address, id_type, registration_date) values (48, 'Yolande Berringer', '7 Union Plaza', 'SIN', '2023-04-27');
+insert into customer (id, full_name, address, id_type, registration_date) values (49, 'Reta Sprigg', '6 Dwight Parkway', 'driving licence', '2022-11-01');
+insert into customer (id, full_name, address, id_type, registration_date) values (50, 'Witty Kellock', '9300 Helena Park', 'SSN', '2023-11-24');
+insert into customer (id, full_name, address, id_type, registration_date) values (51, 'Meara Swalteridge', '3 Golf Lane', 'driving licence', '2022-11-15');
+insert into customer (id, full_name, address, id_type, registration_date) values (52, 'Osbert Heeps', '62 International Avenue', 'SSN', '2023-02-28');
+insert into customer (id, full_name, address, id_type, registration_date) values (53, 'Mozes Oller', '0852 Drewry Avenue', 'SIN', '2022-12-05');
+insert into customer (id, full_name, address, id_type, registration_date) values (54, 'Claresta Carneck', '68 Luster Way', 'SIN', '2023-11-17');
+insert into customer (id, full_name, address, id_type, registration_date) values (55, 'Bianca Sacks', '22 Hoard Court', 'driving licence', '2022-08-20');
+insert into customer (id, full_name, address, id_type, registration_date) values (56, 'Mitch Manz', '95 Harbort Drive', 'SIN', '2023-10-26');
+insert into customer (id, full_name, address, id_type, registration_date) values (57, 'Robinetta Joincey', '4 Delaware Point', 'SIN', '2023-09-14');
+insert into customer (id, full_name, address, id_type, registration_date) values (58, 'Huberto Snaden', '0 Buell Plaza', 'driving licence', '2023-01-05');
+insert into customer (id, full_name, address, id_type, registration_date) values (59, 'Murdoch Shawcross', '05590 Logan Junction', 'SSN', '2024-03-01');
+insert into customer (id, full_name, address, id_type, registration_date) values (60, 'Clo Vamplers', '5 Spaight Way', 'SSN', '2023-09-22');
+insert into customer (id, full_name, address, id_type, registration_date) values (61, 'Salli Allcott', '223 West Lane', 'driving licence', '2023-11-27');
+insert into customer (id, full_name, address, id_type, registration_date) values (62, 'Wylie Kellart', '73 Lakewood Gardens Drive', 'SIN', '2023-09-10');
+insert into customer (id, full_name, address, id_type, registration_date) values (63, 'Ulrica Salasar', '4 Wayridge Park', 'driving licence', '2023-12-21');
+insert into customer (id, full_name, address, id_type, registration_date) values (64, 'Donetta O'' Dooley', '9144 Hollow Ridge Plaza', 'driving licence', '2023-03-26');
+insert into customer (id, full_name, address, id_type, registration_date) values (65, 'Manon Killwick', '0 Towne Place', 'SSN', '2023-12-31');
+insert into customer (id, full_name, address, id_type, registration_date) values (66, 'Bertrando Dyett', '964 Lakeland Crossing', 'SIN', '2022-08-06');
+insert into customer (id, full_name, address, id_type, registration_date) values (67, 'Matthew Kunz', '2 Spenser Crossing', 'driving licence', '2022-09-18');
+insert into customer (id, full_name, address, id_type, registration_date) values (68, 'Prissie Abramovicz', '85 Crownhardt Junction', 'driving licence', '2024-01-17');
+insert into customer (id, full_name, address, id_type, registration_date) values (69, 'Lyle Kermode', '1 Monterey Plaza', 'SIN', '2024-02-29');
+insert into customer (id, full_name, address, id_type, registration_date) values (70, 'Felike Fernely', '8697 Sommers Street', 'SIN', '2023-08-16');
+insert into customer (id, full_name, address, id_type, registration_date) values (71, 'Nicola Hyams', '22970 Shoshone Park', 'driving licence', '2023-06-22');
+insert into customer (id, full_name, address, id_type, registration_date) values (72, 'Genvieve Finkle', '47986 Everett Alley', 'SSN', '2022-09-12');
+insert into customer (id, full_name, address, id_type, registration_date) values (73, 'Micky Gunnell', '358 Main Pass', 'driving licence', '2022-07-01');
+insert into customer (id, full_name, address, id_type, registration_date) values (74, 'Ilario Tompsett', '79093 Clemons Plaza', 'SIN', '2022-12-18');
+insert into customer (id, full_name, address, id_type, registration_date) values (75, 'Modesty Ramsby', '3 Sugar Court', 'SSN', '2023-10-18');
+insert into customer (id, full_name, address, id_type, registration_date) values (76, 'Vladamir Eglese', '5 Brickson Park Street', 'SSN', '2022-09-09');
+insert into customer (id, full_name, address, id_type, registration_date) values (77, 'Zia Yurasov', '177 Elka Pass', 'SSN', '2023-09-29');
+insert into customer (id, full_name, address, id_type, registration_date) values (78, 'Barbara-anne Kilfedder', '39 Rigney Road', 'SSN', '2023-12-23');
+insert into customer (id, full_name, address, id_type, registration_date) values (79, 'Candida Hatherell', '9 Mandrake Alley', 'SIN', '2022-10-08');
+insert into customer (id, full_name, address, id_type, registration_date) values (80, 'Carling Frisch', '93862 Myrtle Alley', 'driving licence', '2022-10-23');
+insert into customer (id, full_name, address, id_type, registration_date) values (81, 'Elfrida Leggat', '1 Sutteridge Terrace', 'driving licence', '2023-07-03');
+insert into customer (id, full_name, address, id_type, registration_date) values (82, 'Lynnet Aughton', '04 Golden Leaf Crossing', 'SIN', '2023-11-09');
+insert into customer (id, full_name, address, id_type, registration_date) values (83, 'Clio Steuhlmeyer', '24 West Pass', 'SSN', '2023-03-05');
+insert into customer (id, full_name, address, id_type, registration_date) values (84, 'Ryann Madle', '19 Donald Junction', 'driving licence', '2022-08-26');
+insert into customer (id, full_name, address, id_type, registration_date) values (85, 'Willette Tolan', '1953 Killdeer Point', 'SIN', '2023-07-25');
+insert into customer (id, full_name, address, id_type, registration_date) values (86, 'Colene Szymczyk', '080 Valley Edge Avenue', 'SSN', '2023-08-29');
+insert into customer (id, full_name, address, id_type, registration_date) values (87, 'Richardo Ivanin', '33062 La Follette Drive', 'driving licence', '2023-09-23');
+insert into customer (id, full_name, address, id_type, registration_date) values (88, 'Annadiana Elner', '5 Northview Lane', 'SIN', '2022-12-01');
+insert into customer (id, full_name, address, id_type, registration_date) values (89, 'Erin Cantopher', '8964 Springs Court', 'SIN', '2023-02-20');
+insert into customer (id, full_name, address, id_type, registration_date) values (90, 'Anthony Schindler', '757 Portage Circle', 'driving licence', '2023-09-18');
+insert into customer (id, full_name, address, id_type, registration_date) values (91, 'Kinna Slatten', '62 Vernon Pass', 'driving licence', '2022-09-22');
+insert into customer (id, full_name, address, id_type, registration_date) values (92, 'Alessandro Brugden', '49 East Park', 'SSN', '2022-09-13');
+insert into customer (id, full_name, address, id_type, registration_date) values (93, 'Melisandra Jeanet', '95 Muir Parkway', 'SIN', '2022-07-18');
+insert into customer (id, full_name, address, id_type, registration_date) values (94, 'Izaak Eastbrook', '54 Memorial Center', 'SSN', '2024-01-14');
+insert into customer (id, full_name, address, id_type, registration_date) values (95, 'Faydra Langsdon', '83735 Towne Parkway', 'SSN', '2023-01-29');
+insert into customer (id, full_name, address, id_type, registration_date) values (96, 'Ronny Dallman', '00 Manitowish Center', 'SSN', '2022-11-11');
+insert into customer (id, full_name, address, id_type, registration_date) values (97, 'Laurel Bowling', '20 Weeping Birch Avenue', 'SSN', '2022-08-19');
+insert into customer (id, full_name, address, id_type, registration_date) values (98, 'Yettie Masterton', '50 Clarendon Junction', 'driving licence', '2023-08-07');
+insert into customer (id, full_name, address, id_type, registration_date) values (99, 'Dominica Storres', '186 Pearson Alley', 'driving licence', '2022-10-27');
+insert into customer (id, full_name, address, id_type, registration_date) values (100, 'Mavis Antoszczyk', '09 Riverside Street', 'SIN', '2022-08-10');
 
 -- ----------------------------
 -- Table structure for employee
