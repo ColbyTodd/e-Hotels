@@ -2516,3 +2516,20 @@ CREATE OR REPLACE TRIGGER increment_room_count
 AFTER INSERT ON room
 FOR EACH ROW
 EXECUTE FUNCTION increment_room_count();
+
+-- ----------------------------
+-- Trigger to decrement number_of_rooms
+-- ----------------------------
+CREATE OR REPLACE FUNCTION decrement_room_count() RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE hotel
+        SET number_of_rooms = number_of_rooms - 1
+		WHERE hotel.id = OLD.hotel_id;
+			RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER decrement_room_count
+AFTER DELETE ON room
+FOR EACH ROW
+EXECUTE FUNCTION decrement_room_count();
