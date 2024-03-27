@@ -503,7 +503,7 @@ CREATE TABLE employee (
     sin varchar(9) NOT NULL CHECK (sin SIMILAR TO '[0-9]{9}'),
     full_name varchar(100) NOT NULL,
     address varchar(100) NOT NULL,
-    role varchar(100) NOT NULL CHECK (role LIKE 'manager' OR role LIKE 'front-desk' OR role LIKE 'maid' OR role LIKE 'janitor' OR role LIKE 'valet' OR role LIKE 'chef'),
+    role varchar(100) CHECK (role LIKE 'manager' OR role LIKE 'front-desk' OR role LIKE 'maid' OR role LIKE 'janitor' OR role LIKE 'valet' OR role LIKE 'chef'),
     FOREIGN KEY (hotel_id) REFERENCES hotel(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (hotel_chain_id) REFERENCES hotel_chain(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
