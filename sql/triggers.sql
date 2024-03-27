@@ -82,3 +82,28 @@ CREATE OR REPLACE TRIGGER set_employee_role_null
 AFTER DELETE ON manager
 FOR EACH ROW
 EXECUTE FUNCTION set_employee_role_null();
+
+ -- ----------------------------
+ -- Trigger to update manager table on employee table role changes
+ -- ----------------------------
+CREATE OR REPLACE FUNCTION handle_employee_change() RETURNS TRIGGER AS $$
+BEGIN
+	IF TG_OP = 'DELETE' THEN
+		DELETE FROM manager
+			WHERE employee_id = OLD.id;
+			RETURN OLD;
+	ELSIF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
+		IF NEW.role = 'manager' THEN
+			INSERT INTO manager VALUES(NEW.id, NEW.hotel_id, NEW.hotel_chain_id);
+			RETURN NEW;
+		END IF;
+		RETURN NEW;
+	END IF;
+
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER handle_employee_change
+AFTER UPDATE OR INSERT OR DELETE ON employee
+FOR EACH ROW
+EXECUTE FUNCTION handle_employee_change();
