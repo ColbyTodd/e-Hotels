@@ -65,3 +65,20 @@ CREATE OR REPLACE TRIGGER decrement_room_count
 AFTER DELETE ON room
 FOR EACH ROW
 EXECUTE FUNCTION decrement_room_count();
+
+-- ----------------------------
+-- Trigger to set employee role null
+-- ----------------------------
+CREATE OR REPLACE FUNCTION set_employee_role_null() RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE employee
+        SET role = null
+		WHERE id = OLD.employee_id;
+			RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER set_employee_role_null
+AFTER DELETE ON manager
+FOR EACH ROW
+EXECUTE FUNCTION set_employee_role_null();
