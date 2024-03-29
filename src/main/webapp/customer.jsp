@@ -45,7 +45,7 @@
                 <table class="table">
                     <thead>
                     <tr>
-                        <th>Start - End Date</th>
+                        <th>Start - End Date <span style="color: #ff0000">(Mandatory)</span></th>
                         <th>Room Capacity</th>
                         <th>Location</th>
                         <th>Price Range</th>
