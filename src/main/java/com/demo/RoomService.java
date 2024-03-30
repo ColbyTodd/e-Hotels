@@ -11,7 +11,8 @@ import java.util.Date;
 import java.util.HashSet;
 
 public class RoomService {
-    public List<Room> getSpecifiedRooms(Integer capacity, Integer maxPrice, Integer hotelChain, Integer size, Date startDate, Date endDate, Integer category, String city) throws Exception {
+    public List<Room> getSpecifiedRooms(Integer capacity, Integer maxPrice, Integer hotelChain, Integer size, Date startDate,
+                                        Date endDate, Integer category, String city) throws Exception {
         List<Room> rooms = new ArrayList<>();
         HashSet<Integer> addedRoomIds = new HashSet<>(); // Set to track added room IDs
         List<Object> params = new ArrayList<>();
@@ -83,17 +84,46 @@ public class RoomService {
                             rs.getString("room_view"),
                             rs.getBoolean("extendable"),
                             rs.getBoolean("problems"),
-                            rs.getBoolean("status"));
+                            rs.getBoolean("status"),
+                            rs.getDate("start_date"),
+                            rs.getDate("end_date"),
+                            rs.getInt("number_of_rooms"),
+                            rs.getInt("category"),
+                            rs.getString("city"));
                     rooms.add(room);
                     addedRoomIds.add(roomId); // Remember this room ID as added
                 }
             }
+            rs.close();
+            // close statement
+            stmt.close();
+            con.close();
+            db.close();
             return rooms;
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception(e.getMessage());
         }
     }
+    public void updateRoomStatus(Integer roomId) throws SQLException {
+        // Your SQL to update the room's booked and rented status
+        String sql = "UPDATE room SET status=? WHERE id=?;";
+        ConnectionDB db = new ConnectionDB();
+        try (Connection con = db.getConnection()){
+         PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setBoolean(1, true);
+            stmt.setInt(2, roomId);
+            stmt.executeUpdate();
+
+            stmt.close();
+            con.close();
+            db.close();
+
+        } catch (Exception e) {
+            throw new SQLException("Error updating room status", e);
+        }
+    }
+
 
 
 

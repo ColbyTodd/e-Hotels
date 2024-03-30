@@ -1,5 +1,5 @@
 package com.demo;
-
+import java.util.Date;
 /**
  * Room class represents the room entity in the database.
  * It holds information about each room, including its hotel ID, hotel chain ID, price,
@@ -17,6 +17,15 @@ public class Room {
     private Boolean extendable;
     private Boolean problems;
     private Boolean status;
+    private Date startDate;
+    private Date endDate;
+    private Integer numberOfRooms; // hotel size
+    private Integer category; // hotel category
+    private String city; // hotel city
+
+    private Boolean booked;
+    private Boolean rented;
+
 
     /**
      * Constructor for Room object.
@@ -47,7 +56,67 @@ public class Room {
         this.problems = problems;
         this.status = status;
     }
+    public Room(Integer id, Integer hotelId, Integer hotelChainId, Integer price, String amenities, Integer capacity, String roomView,
+                Boolean extendable, Boolean problems, Boolean status, Date startDate, Date endDate,
+                Integer numberOfRooms, Integer category, String city, Boolean booked, Boolean rented) {
+        // Initialize existing fields
+        this.id = id;
+        this.hotelId = hotelId;
+        this.hotelChainId = hotelChainId;
+        this.price = price;
+        this.amenities = amenities;
+        this.capacity = capacity;
+        this.roomView = roomView;
+        this.extendable = extendable;
+        this.problems = problems;
+        this.status = status;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.numberOfRooms = numberOfRooms;
+        this.category = category;
+        this.city = city;
+        this.booked = booked;
+        this.rented = rented;
+    }
 
+    public Room(Integer id, Integer hotelId, Integer hotelChainId, Integer price, String amenities, Integer capacity, String roomView, Boolean extendable, Boolean problems, Boolean status, Date startDate, Date endDate, Integer numberOfRooms, Integer category, String city) {
+        // Initialize existing fields
+        this.id = id;
+        this.hotelId = hotelId;
+        this.hotelChainId = hotelChainId;
+        this.price = price;
+        this.amenities = amenities;
+        this.capacity = capacity;
+        this.roomView = roomView;
+        this.extendable = extendable;
+        this.problems = problems;
+        this.status = status;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.numberOfRooms = numberOfRooms;
+        this.category = category;
+        this.city = city;
+    }
+
+    public Boolean getBooked() { return booked; }
+    public void setBooked(Boolean booked) { this.booked = booked; }
+    public Boolean getRented() { return rented; }
+    public void setRented(Boolean rented) { this.rented = rented; }
+
+    public Date getStartDate() { return startDate; }
+    public void setStartDate(Date startDate) { this.startDate = startDate; }
+
+    public Date getEndDate() { return endDate; }
+    public void setEndDate(Date endDate) { this.endDate = endDate; }
+
+    public Integer getNumberOfRooms() { return numberOfRooms; }
+    public void setNumberOfRooms(Integer numberOfRooms) { this.numberOfRooms = numberOfRooms; }
+
+    public Integer getCategory() { return category; }
+    public void setCategory(Integer category) { this.category = category; }
+
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
     // Getters and Setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
@@ -85,4 +154,7 @@ public class Room {
                 ", status=" + status +
                 '}';
     }
+
+
+
 }

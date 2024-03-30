@@ -6,7 +6,13 @@
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.text.ParseException" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.Calendar" %>
 
+<%
+Date today = new Date(); // Get today's date
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+today = sdf.parse(sdf.format(today)); // Resetting time to 00:00:00 for accurate comparison
+%>
 <html lang="en">
 <head>
     <!-- Required meta tags -->
@@ -80,7 +86,7 @@
                                                 <option value="Ottawa">Ottawa</option>
                                                 <option value="Toronto">Toronto</option>
                                                 <option value="Montreal">Montreal</option>
-                                                <option value="Vancouver">Vancouver</option>
+                                                <option value="San Sebastian">San Sebastian</option>
                                             </select>
                                             <label for="location">Location</label>
                                         </div>
@@ -185,6 +191,12 @@
                             <th>Extendable</th>
                             <th>Problems</th>
                             <th>Status</th>
+                            <th>Hotel Size</th>
+                            <th>Category</th>
+                            <th>City</th>
+                            <th>Rent Start Date</th>
+                            <th>Rent End Date</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -207,9 +219,21 @@
                                     <td><%= room.getAmenities() %></td>
                                     <td><%= room.getCapacity() %></td>
                                     <td><%= room.getRoomView() %></td>
-                                    <td><%= room.getExtendable() ? "Yes" : "No" %></td>
-                                    <td><%= room.getProblems() ? "Yes" : "No" %></td>
-                                    <td><%= room.getStatus() ? "Available" : "Not Available" %></td>
+                                    <td><%= room.getExtendable()%></td>
+                                    <td><%= room.getProblems()%></td>
+                                    <td><%= room.getStatus()%></td>
+                                    <td><%= room.getNumberOfRooms() %></td>
+                                    <td><%= room.getCategory() %></td>
+                                    <td><%= room.getCity() %></td>
+                                    <td><%= room.getStartDate() != null ? new SimpleDateFormat("yyyy-MM-dd").format(room.getStartDate()) : "" %></td>
+                                    <td><%= room.getEndDate() != null ? new SimpleDateFormat("yyyy-MM-dd").format(room.getEndDate()) : "" %></td>
+                                    <td>
+                                        <% if (!room.getStatus() && (room.getStartDate() == null || room.getStartDate().after(today) || sdf.format(room.getStartDate()).equals(sdf.format(today)))) { %>
+                                            <button onclick="bookRoom(<%=room.getId()%>);">Book</button>
+                                        <% } else { %>
+                                            <button disabled>Unavailable</button>
+                                        <% } %>
+                                    </td>
                                 </tr>
                                 <%
                             }
@@ -218,7 +242,7 @@
                         } else {
                             %>
                             <tr>
-                                <td colspan="10">No results found.</td>
+                                <td colspan="15">No results found.</td>
                             </tr>
                             <%
                         }
@@ -228,6 +252,28 @@
             </div>
         </div>
     </div>
+    <script>
+    function bookRoom(roomId) {
+        var button = document.getElementById("button" + roomId); // Ensure you're correctly assigning IDs to your buttons
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var responseText = this.responseText.trim(); // Trim whitespace
+                if (responseText.toLowerCase() === "success") { // Case-insensitive comparison
+                    button.disabled = true;
+                    button.innerText = 'Unavailable';
+                } else {
+                    alert("Failed to book room: " + responseText);
+                }
+            }
+        };
+        xhttp.open("POST", "bookRoom.jsp", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send("roomId=" + roomId);
+    }
+    </script>
+
+
 
 </body>
 </html>

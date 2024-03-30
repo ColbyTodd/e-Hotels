@@ -13,6 +13,7 @@
 </head>
 <body>
     <%
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date startDate = null;
         String startDateStr = request.getParameter("startDate");
