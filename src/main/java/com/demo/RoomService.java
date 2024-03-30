@@ -7,27 +7,57 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
+import java.util.HashSet;
 
 public class RoomService {
-    public List<Room> getSpecifiedRooms(Integer capacity, Integer maxPrice, Integer hotelChain) throws Exception {
-
+    public List<Room> getSpecifiedRooms(Integer capacity, Integer maxPrice, Integer hotelChain, Integer size, Date startDate, Date endDate, Integer category, String city) throws Exception {
         List<Room> rooms = new ArrayList<>();
+        HashSet<Integer> addedRoomIds = new HashSet<>(); // Set to track added room IDs
         List<Object> params = new ArrayList<>();
 
-        StringBuilder sql = new StringBuilder("SELECT * FROM room WHERE 1=1");
+
+        // Starting SQL with a join to include hotel information
+        StringBuilder sql = new StringBuilder(
+                "SELECT DISTINCT room.*, rent.start_date, rent.end_date, hotel.number_of_rooms, hotel.category, hotel.city " +
+                        "FROM room " +
+                        "JOIN hotel ON room.hotel_id = hotel.id " +
+                        "LEFT JOIN rent ON room.id = rent.room_id " +
+                        "WHERE 1=1"
+        );
         ConnectionDB db = new ConnectionDB();
 
-        if (capacity != null && capacity > 0) { // Adjust condition as per your criteria
-            sql.append(" AND capacity = ?");
+        if (capacity != null && capacity > 0) {
+            sql.append(" AND room.capacity = ?");
             params.add(capacity);
         }
-        if (maxPrice != null && maxPrice > 0) { // Adjust condition as per your criteria
-            sql.append(" AND price <= ?");
+        if (maxPrice != null && maxPrice > 0) {
+            sql.append(" AND room.price <= ?");
             params.add(maxPrice);
         }
-        if (hotelChain != null && hotelChain > 0) { // Adjust condition as per your criteria
-            sql.append(" AND hotel_chain_id = ?");
+        if (hotelChain != null && hotelChain > 0) {
+            sql.append(" AND room.hotel_chain_id = ?");
             params.add(hotelChain);
+        }
+        if (size != null && size > 0) {
+            sql.append(" AND hotel.number_of_rooms <= ?");
+            params.add(size);
+        }
+        if (startDate != null) {
+            sql.append(" AND rent.start_date >= ?");
+            params.add(new java.sql.Date(startDate.getTime()));
+        }
+        if (endDate != null) {
+            sql.append(" AND rent.end_date <= ?");
+            params.add(new java.sql.Date(endDate.getTime()));
+        }
+        if (category != null && category > 0) {
+            sql.append(" AND hotel.category = ?");
+            params.add(category);
+        }
+        if (city != null && !city.isEmpty()) {
+            sql.append(" AND hotel.city = ?");
+            params.add(city);
         }
         System.out.println("hi");
         System.out.println(sql);
@@ -40,9 +70,11 @@ public class RoomService {
             }
             ResultSet rs = stmt.executeQuery();
 
-                while (rs.next()) {
+            while (rs.next()) {
+                int roomId = rs.getInt("id");
+                if (!addedRoomIds.contains(roomId)) { // Check if the room ID has already been added
                     Room room = new Room(
-                            rs.getInt("id"),
+                            roomId,
                             rs.getInt("hotel_id"),
                             rs.getInt("hotel_chain_id"),
                             rs.getInt("price"),
@@ -53,22 +85,16 @@ public class RoomService {
                             rs.getBoolean("problems"),
                             rs.getBoolean("status"));
                     rooms.add(room);
+                    addedRoomIds.add(roomId); // Remember this room ID as added
                 }
-            rs.close();
-            // close the statement
-            stmt.close();
-            con.close();
-            db.close();
-            return rooms;
-
             }
-        catch (Exception e) {
+            return rooms;
+        } catch (Exception e) {
             e.printStackTrace();
             throw new Exception(e.getMessage());
-
-            }
-
         }
+    }
+
 
 
     public List<Room> testGetSpecifiedRooms(Integer capacity) throws Exception {
@@ -106,7 +132,7 @@ public class RoomService {
     }
 
 
-
+    // may need to use these later
     public List<Room> getRooms() throws Exception {
         List<Room> rooms = new ArrayList<>();
         String sql = "SELECT * FROM room";

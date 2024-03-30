@@ -4,6 +4,7 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Date" %>
 <%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.text.ParseException" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html lang="en">
@@ -133,7 +134,11 @@
                                         <div class="form-floating" style="padding-top: 5px">
                                             <select class="form-select" id="category" name="category" aria-label="Category">
                                                 <option selected value="">No preference</option>
-                                                <!-- Add your options here similar to above -->
+                                                <option value="1">1 Star</option>
+                                                <option value="2">2 Star</option>
+                                                <option value="3">3 Star</option>
+                                                <option value="4">4 Star</option>
+                                                <option value="5">5 Star</option>
                                             </select>
                                             <label for="category">Hotel Category</label>
                                         </div>
@@ -144,7 +149,11 @@
                                         <div class="form-floating" style="padding-top: 5px">
                                             <select class="form-select" id="size" name="size" aria-label="Size">
                                                 <option selected value="">No preference</option>
-                                                <!-- Add your options here similar to above -->
+                                                <option value="25">Less than 25</option>
+                                                <option value="99">Less than 99</option>
+                                                <option value="149">Less than 149</option>
+                                                <option value="299">Less than 299</option>
+                                                <option value="300">Less than 300</option>
                                             </select>
                                             <label for="size">Hotel Room Count</label>
                                         </div>
