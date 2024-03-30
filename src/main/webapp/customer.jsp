@@ -1,10 +1,10 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: vivet
-  Date: 2024-03-25
-  Time: 2:44 p.m.
-  To change this template use File | Settings | File Templates.
---%>
+<%@ page import="com.demo.RoomService" %>
+<%@ page import="com.demo.Room" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.text.ParseException" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html lang="en">
@@ -16,8 +16,8 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <!-- Bootstrap Date Picker Plugin -->
-    <source src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
-    <source src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
     <title>Customer</title>
 </head>
@@ -27,7 +27,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     <div class="container-fluid">
-        <!-- Title + Return To Home Button -->
         <div class="text-center">
             <div class="row">
                 <h2 style="padding-top: 100px; padding-bottom: 20px">E-Hotel Booking Application</h2>
@@ -41,142 +40,194 @@
             <div class="row" style="padding-top: 20px">
                 <h3>Enter whatever criteria you want to find the perfect room for you!</h3>
             </div>
-            <div class="row" style="padding: 20px">
+            <!-- Start of Form -->
+            <form action="update-customer.jsp" method="POST">
+                <div class="row" style="padding: 20px">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Start - End Date</th>
+                                <th>Room Capacity</th>
+                                <th>Location</th>
+                                <th>Price Range</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="calender-box" style="padding-left: 5px; padding-right: 10px">
+                                        <!-- Start & End Date -->
+                                        <div class="row">
+                                            <label for="startDate">Start:</label>
+                                            <input type="date" id="startDate" name="startDate">
+                                        </div>
+                                        <div class="row" style="padding-top: 5px">
+                                            <label for="endDate">End:</label>
+                                            <input type="date" id="endDate" name="endDate">
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group" style="padding-top: 5px">
+                                        <input type="number" class="form-control" id="capacityInput" name="capacity" placeholder="Enter a room capacity" aria-label="Capacity">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="calender-box">
+                                        <div class="form-floating" style="padding-top: 5px">
+                                            <select class="form-select" id="location" name="location" aria-label="Location">
+                                                <option selected value="">No preference</option>
+                                                <option value="Ottawa">Ottawa</option>
+                                                <option value="Toronto">Toronto</option>
+                                                <option value="Montreal">Montreal</option>
+                                                <option value="Vancouver">Vancouver</option>
+                                            </select>
+                                            <label for="location">Location</label>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="calender-box">
+                                        <div class="form-floating" style="padding-top: 5px">
+                                            <select class="form-select" id="maxPrice" name="maxPrice" aria-label="Price">
+                                                <option selected value="">No preference</option>
+                                                <option value="100">< $100</option>
+                                                <option value="200">< $200</option>
+                                                <option value="500">< $500</option>
+                                                <option value="1000">< $1000</option>
+                                                <option value="2000">< $2000</option>
+                                            </select>
+                                            <label for="maxPrice">Max Price</label>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th>Hotel Chain</th>
+                                <th>Hotel Category</th>
+                                <th>Total Number of Rooms in Hotel</th>
+                                <th>Find A Room</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="calender-box">
+                                        <div class="form-floating" style="padding-top: 5px">
+                                            <select class="form-select" id="hotelChain" name="hotelChain" aria-label="Chain">
+                                                <option selected value="">No preference</option>
+                                                  <option value="1">Chain Bogisich LLC</option>
+                                                  <option value="2">Chain Kunde LLC</option>
+                                                  <option value="3">Chain Stamm, Bins and Hirthe</option>
+                                                  <option value="4">Chain Vandervort, Leannon and Koelpin</option>
+                                                  <option value="5">Chain Price, Schulist and Gusikowski</option>
+
+                                            </select>
+                                            <label for="hotelChain">Hotel Chain</label>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="calender-box">
+                                        <div class="form-floating" style="padding-top: 5px">
+                                            <select class="form-select" id="category" name="category" aria-label="Category">
+                                                <option selected value="">No preference</option>
+                                                <option value="1">1 Star</option>
+                                                <option value="2">2 Star</option>
+                                                <option value="3">3 Star</option>
+                                                <option value="4">4 Star</option>
+                                                <option value="5">5 Star</option>
+                                            </select>
+                                            <label for="category">Hotel Category</label>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="calender-box">
+                                        <div class="form-floating" style="padding-top: 5px">
+                                            <select class="form-select" id="size" name="size" aria-label="Size">
+                                                <option selected value="">No preference</option>
+                                                <option value="25">Less than 25</option>
+                                                <option value="99">Less than 99</option>
+                                                <option value="149">Less than 149</option>
+                                                <option value="299">Less than 299</option>
+                                                <option value="300">Less than 300</option>
+                                            </select>
+                                            <label for="size">Hotel Room Count</label>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="column" style="padding: 5px 10px 20px 5px">
+                                        <button type="submit" class="btn btn-primary btn-lg"><h4>Search For Rooms</h4></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+            <!-- Insert this after the form in customer.jsp -->
+            <div class="container mt-4">
+                <h2>Search Results</h2>
                 <table class="table">
                     <thead>
-                    <tr>
-                        <th>Start - End Date <span style="color: #ff0000">(Mandatory)</span></th>
-                        <th>Room Capacity</th>
-                        <th>Location</th>
-                        <th>Price Range</th>
-                    </tr>
+                        <tr>
+                            <th>ID</th>
+                            <th>Hotel ID</th>
+                            <th>Hotel Chain ID</th>
+                            <th>Price</th>
+                            <th>Amenities</th>
+                            <th>Capacity</th>
+                            <th>Room View</th>
+                            <th>Extendable</th>
+                            <th>Problems</th>
+                            <th>Status</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>
-                            <div class="calender-box" style="padding-left: 5px; padding-right: 10px">
-                                <form>
-                                    <!-- Start & End Date -->
-                                    <div class="row">
-                                        <label for="date1">Start:</label>
-                                        <input type="date" id="date1" name="date" required>
-                                    </div>
-                                    <div class="row" style="padding-top: 5px">
-                                        <label for="date2">End:</label>
-                                        <input type="date" id="date2" name="date" required>
-                                    </div>
-                                </form>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="input-group" style="padding-top: 5px">
-                                <input type="text" class="form-control" placeholder="Enter a room capacity" aria-label="Capacity">
-                            </div>
-                        </td>
-                        <td>
-                            <div class="calender-box">
-                                <div class="form-floating" style="padding-top: 5px">
-                                    <!-- Location options should depend on the database -->
-                                    <select class="form-select" id="floatingSelect1" aria-label="Location">
-                                        <option selected>No preference</option>
-                                        <option value="0">Ottawa</option>
-                                        <option value="1">Toronto</option>
-                                        <option value="2">Montreal</option>
-                                        <option value="3">Vancouver</option>
-                                    </select>
-                                    <label for="floatingSelect1">Location</label>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="calender-box">
-                                <div class="form-floating" style="padding-top: 5px">
-                                    <!-- Max price for a room -->
-                                    <select class="form-select" id="floatingSelect5" aria-label="Price">
-                                        <option selected>No preference</option>
-                                        <option value="0">< $100</option>
-                                        <option value="1">< $200</option>
-                                        <option value="2">< $500</option>
-                                        <option value="3">< $1000</option>
-                                        <option value="4">< $2000</option>
-                                    </select>
-                                    <label for="floatingSelect5">Max Price</label>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                    <thread>
-                        <tr>
-                            <th>Hotel Chain</th>
-                            <th>Hotel Category</th>
-                            <th>Total Number of Rooms in Hotel</th>
-                            <th>Find A Room</th>
-                        </tr>
-                    </thread>
-                    <tbody>
-                        <td>
-                            <div class="calender-box">
-                                <div class="form-floating" style="padding-top: 5px">
-                                    <!-- Hotel Chain options should depend on the database -->
-                                    <select class="form-select" id="floatingSelect2" aria-label="Chain">
-                                        <option selected>No preference</option>
-                                        <option value="0">Chain 1</option>
-                                        <option value="1">Chain 2</option>
-                                        <option value="2">Chain 3</option>
-                                        <option value="3">Chain 4</option>
-                                    </select>
-                                    <label for="floatingSelect2">Hotel Chain</label>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="calender-box">
-                                <div class="form-floating" style="padding-top: 5px">
-                                    <!-- Hotel Category options -->
-                                    <select class="form-select" id="floatingSelect3" aria-label="Category">
-                                        <option selected>No preference</option>
-                                        <option value="0">1 Star</option>
-                                        <option value="1">2 Star</option>
-                                        <option value="2">3 Star</option>
-                                        <option value="3">4 Star</option>
-                                        <option value="4">5 Star</option>
-                                    </select>
-                                    <label for="floatingSelect3">Star Rating</label>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="calender-box">
-                                <div class="form-floating" style="padding-top: 5px">
-                                    <!-- Min/Max number of rooms in a specific hotel -->
-                                    <select class="form-select" id="floatingSelect4" aria-label="Size">
-                                        <option selected>No preference</option>
-                                        <option value="0">< 25</option>
-                                        <option value="1">26 - 99</option>
-                                        <option value="2">100 - 149</option>
-                                        <option value="3">150 - 299</option>
-                                        <option value="4">> 300</option>
-                                    </select>
-                                    <label for="floatingSelect4">Hotel Room Count</label>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="column" style="padding: 5px 10px 20px 5px">
-                                <a class="btn btn-primary btn-lg" role="button"><h4>Search For Rooms</h4></a>
-                            </div>
-                        </td>
-                        <form method="POST" action="delete-grade-controller.jsp">
-                            <td>
-                                <input type="hidden" value="4" name="id" />
-                            </td>
-                        </form>
+                        <%
+                        List<Room> rooms = (List<Room>) session.getAttribute("roomsResults");
+                        List<Room> roomsDebug = (List<Room>) session.getAttribute("roomsResults");
+                            if (roomsDebug != null) {
+                                out.println("<h3>Debug: Session 'roomsResults' contains " + roomsDebug.size() + " rooms.</h3>");
+                            } else {
+                                out.println("<h3>Debug: Session 'roomsResults' is null or not set.</h3>");
+                            }
+                        if (rooms != null && !rooms.isEmpty()) {
+                            for (Room room : rooms) {
+                                %>
+                                <tr>
+                                    <td><%= room.getId() %></td>
+                                    <td><%= room.getHotelId() %></td>
+                                    <td><%= room.getHotelChainId() %></td>
+                                    <td><%= room.getPrice() %></td>
+                                    <td><%= room.getAmenities() %></td>
+                                    <td><%= room.getCapacity() %></td>
+                                    <td><%= room.getRoomView() %></td>
+                                    <td><%= room.getExtendable() ? "Yes" : "No" %></td>
+                                    <td><%= room.getProblems() ? "Yes" : "No" %></td>
+                                    <td><%= room.getStatus() ? "Available" : "Not Available" %></td>
+                                </tr>
+                                <%
+                            }
+                            // Clear the attribute after use to prevent stale data on refresh
+                            session.removeAttribute("roomsResults");
+                        } else {
+                            %>
+                            <tr>
+                                <td colspan="10">No results found.</td>
+                            </tr>
+                            <%
+                        }
+                        %>
                     </tbody>
                 </table>
             </div>
         </div>
-        <h1></h1>
     </div>
+
 </body>
 </html>
