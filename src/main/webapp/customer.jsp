@@ -7,10 +7,24 @@
 <%@ page import="java.text.ParseException" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.Calendar" %>
-
 <%
-Date today = new Date(); // Get today's date
 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+Date searchStartDate = null;
+Date searchEndDate = null;
+try {
+    // Assuming the dates were stored as String. Attempt to parse them back to Date objects.
+    String startStr = (String)session.getAttribute("searchStartDate");
+    String endStr = (String)session.getAttribute("searchEndDate");
+    if (startStr != null && endStr != null) {
+        searchStartDate = sdf.parse(startStr);
+        searchEndDate = sdf.parse(endStr);
+    }
+} catch (ParseException e) {
+    e.printStackTrace();
+    // Handle parse exception here, maybe set an error message to display to the user
+}
+
+Date today = new Date(); // Get today's date
 today = sdf.parse(sdf.format(today)); // Resetting time to 00:00:00 for accurate comparison
 %>
 <html lang="en">
@@ -175,7 +189,7 @@ today = sdf.parse(sdf.format(today)); // Resetting time to 00:00:00 for accurate
                     </table>
                 </div>
             </form>
-            <!-- Insert this after the form in customer.jsp -->
+
             <div class="container mt-4">
                 <h2>Search Results</h2>
                 <table class="table">
@@ -202,49 +216,46 @@ today = sdf.parse(sdf.format(today)); // Resetting time to 00:00:00 for accurate
                     <tbody>
                         <%
                         List<Room> rooms = (List<Room>) session.getAttribute("roomsResults");
-                        List<Room> roomsDebug = (List<Room>) session.getAttribute("roomsResults");
-                            if (roomsDebug != null) {
-                                out.println("<h3>Debug: Session 'roomsResults' contains " + roomsDebug.size() + " rooms.</h3>");
-                            } else {
-                                out.println("<h3>Debug: Session 'roomsResults' is null or not set.</h3>");
-                            }
                         if (rooms != null && !rooms.isEmpty()) {
                             for (Room room : rooms) {
-                                %>
-                                <tr>
-                                    <td><%= room.getId() %></td>
-                                    <td><%= room.getHotelId() %></td>
-                                    <td><%= room.getHotelChainId() %></td>
-                                    <td><%= room.getPrice() %></td>
-                                    <td><%= room.getAmenities() %></td>
-                                    <td><%= room.getCapacity() %></td>
-                                    <td><%= room.getRoomView() %></td>
-                                    <td><%= room.getExtendable()%></td>
-                                    <td><%= room.getProblems()%></td>
-                                    <td><%= room.getStatus()%></td>
-                                    <td><%= room.getNumberOfRooms() %></td>
-                                    <td><%= room.getCategory() %></td>
-                                    <td><%= room.getCity() %></td>
-                                    <td><%= room.getStartDate() != null ? new SimpleDateFormat("yyyy-MM-dd").format(room.getStartDate()) : "" %></td>
-                                    <td><%= room.getEndDate() != null ? new SimpleDateFormat("yyyy-MM-dd").format(room.getEndDate()) : "" %></td>
-                                    <td>
-                                        <% if (!room.getStatus() && (room.getStartDate() == null || room.getStartDate().after(today) || sdf.format(room.getStartDate()).equals(sdf.format(today)))) { %>
-                                            <button onclick="bookRoom(<%=room.getId()%>);">Book</button>
-                                        <% } else { %>
-                                            <button disabled>Unavailable</button>
-                                        <% } %>
-                                    </td>
-                                </tr>
-                                <%
+                        %>
+                        <tr>
+                            <td><%= room.getId() %></td>
+                            <td><%= room.getHotelId() %></td>
+                            <td><%= room.getHotelChainId() %></td>
+                            <td><%= room.getPrice() %></td>
+                            <td><%= room.getAmenities() %></td>
+                            <td><%= room.getCapacity() %></td>
+                            <td><%= room.getRoomView() %></td>
+                            <td><%= room.getExtendable() %></td>
+                            <td><%= room.getProblems() %></td>
+                            <td><%= room.getStatus() %></td>
+                            <td><%= room.getNumberOfRooms() %></td>
+                            <td><%= room.getCategory() %></td>
+                            <td><%= room.getCity() %></td>
+                            <td><%= sdf.format(searchStartDate) %></td>
+                            <td><%= sdf.format(searchEndDate) %></td>
+                            <td>
+                                <% if (!room.getStatus()) { %>
+                                    <button id="button<%= room.getId() %>"
+                                            onclick="bookRoom(this)"
+                                            data-room-id="<%= room.getId() %>"
+                                            data-start-date="<%= sdf.format(searchStartDate) %>"
+                                            data-end-date="<%= sdf.format(searchEndDate) %>">Book</button>
+
+                                <% } else { %>
+                                    <button disabled>Unavailable</button>
+                                <% } %>
+                            </td>
+                        </tr>
+                        <%
                             }
-                            // Clear the attribute after use to prevent stale data on refresh
-                            session.removeAttribute("roomsResults");
                         } else {
-                            %>
-                            <tr>
-                                <td colspan="15">No results found.</td>
-                            </tr>
-                            <%
+                        %>
+                        <tr>
+                            <td colspan="16">No results found.</td>
+                        </tr>
+                        <%
                         }
                         %>
                     </tbody>
@@ -252,26 +263,37 @@ today = sdf.parse(sdf.format(today)); // Resetting time to 00:00:00 for accurate
             </div>
         </div>
     </div>
-    <script>
-    function bookRoom(roomId) {
-        var button = document.getElementById("button" + roomId); // Ensure you're correctly assigning IDs to your buttons
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                var responseText = this.responseText.trim(); // Trim whitespace
-                if (responseText.toLowerCase() === "success") { // Case-insensitive comparison
-                    button.disabled = true;
-                    button.innerText = 'Unavailable';
-                } else {
-                    alert("Failed to book room: " + responseText);
-                }
-            }
-        };
-        xhttp.open("POST", "bookRoom.jsp", true);
-        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhttp.send("roomId=" + roomId);
-    }
-    </script>
+  <script>
+     function bookRoom(button) {
+         console.log("Book room function called");
+         var roomId = button.getAttribute("data-room-id");
+         var startDate = button.getAttribute("data-start-date");
+         var endDate = button.getAttribute("data-end-date");
+
+         var xhttp = new XMLHttpRequest();
+         xhttp.onreadystatechange = function() {
+             if (this.readyState == 4 && this.status == 200) {
+                 var responseText = this.responseText.trim();
+
+                 if (responseText.toLowerCase() === "success") {
+                     button.disabled = true;
+                     button.innerText = 'Unavailable';
+                     alert("Room booked successfully!"); // You can change this to a success message instead
+                 } else {
+                     alert("Failed to book room: " + responseText);
+                 }
+             }
+         };
+         xhttp.open("POST", "bookRoom.jsp", true);
+         xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+         xhttp.send(`roomId=${roomId}&startDate=${startDate}&endDate=${endDate}`);
+     }
+  </script>
+
+
+
+
+
 
 
 

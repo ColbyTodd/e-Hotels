@@ -3,32 +3,32 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.util.Date" %>
+<%@ page import="java.sql.Date" %>
 <%@ page import="java.text.ParseException" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.sql.SQLException" %>
+<%@ page import="com.demo.RentService, com.demo.Rent" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%
-Integer roomId = null;
-String roomIdParam = request.getParameter("roomId");
-if (roomIdParam != null) {
+    int roomId = Integer.parseInt(request.getParameter("roomId"));
+    // This needs to be dynamically determined or passed correctly
+    int customerId = 1;
+    int hotelId = 1;
+    int hotelChainId = 1;
+    Date startDate = Date.valueOf(request.getParameter("startDate"));
+    Date endDate = Date.valueOf(request.getParameter("endDate"));
+    String payment = null; // Assuming you will handle payment details later
+
+    Rent newRent = new Rent(null, customerId, roomId, hotelId, hotelChainId, startDate, endDate, payment);
+
+    RentService rentService = new RentService();
+    String resultMessage;
     try {
-        roomId = Integer.parseInt(roomIdParam);
-    } catch (NumberFormatException e) {
-        response.getWriter().write("Invalid room ID");
-        return;
+        resultMessage = rentService.createRent(newRent);
+    } catch (Exception e) {
+        resultMessage = "Failed to create rent: " + e.getMessage();
     }
 
-    RoomService service = new RoomService();
-    try {
-        service.updateRoomStatus(roomId);
-        response.getWriter().write("Success");
-    } catch (SQLException e) {
-        // Log error
-        response.getWriter().write("Error updating room status: " + e.getMessage());
-    }
-} else {
-    response.getWriter().write("Room ID not provided");
-}
+    response.getWriter().write(resultMessage);
 %>
-
