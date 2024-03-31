@@ -9,7 +9,7 @@ ON customer.id = rent.customer_id;
 -- Query 2
 -- ----------------------------
 SELECT * FROM hotel
-WHERE city = 'San Sebastian';
+WHERE city = 'Toronto';
 
 -- ----------------------------
 -- Aggregate Query
