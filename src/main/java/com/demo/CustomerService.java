@@ -29,11 +29,14 @@ public class CustomerService {
         } finally {
             db.close();
         }
+
+        db.close();
         return customers;
     }
 
     public String createCustomer(Customer customer) throws Exception {
-        String sql = "INSERT INTO customers (full_name, address, id_type, registration_date) VALUES (?, ?, ?, ?)";
+        resetCustomerPrimaryKeySequence();
+        String sql = "INSERT INTO customer (full_name, address, id_type, registration_date) VALUES (?, ?, ?, ?)";
         try (Connection con = db.getConnection(); PreparedStatement stmt = con.prepareStatement(sql)) {
 
             stmt.setString(1, customer.getFullName());
@@ -41,9 +44,53 @@ public class CustomerService {
             stmt.setString(3, customer.getIdType());
             stmt.setDate(4, new java.sql.Date(customer.getRegistrationDate().getTime()));
             stmt.executeUpdate();
+
+            stmt.close();
+            con.close();
+            db.close();
             return "Customer created successfully!";
         } catch (SQLException e) {
             return "Error while creating customer: " + e.getMessage();
+        }
+    }
+    public void resetCustomerPrimaryKeySequence() throws SQLException {
+        String maxIdQuery = "SELECT MAX(id) FROM customer;";
+        String currValQuery = "SELECT last_value FROM customer_id_seq;";
+        try (Connection con = db.getConnection();
+             PreparedStatement maxIdStmt = con.prepareStatement(maxIdQuery);
+             PreparedStatement currValStmt = con.prepareStatement(currValQuery)) {
+
+            // Get the current max id from the rent table
+            ResultSet rsMaxId = maxIdStmt.executeQuery();
+            int maxId = 0;
+            if (rsMaxId.next()) {
+                maxId = rsMaxId.getInt(1);
+            }
+            rsMaxId.close();
+
+            // Get the current value of the sequence
+            ResultSet rsCurrVal = currValStmt.executeQuery();
+            int currVal = 0;
+            if (rsCurrVal.next()) {
+                currVal = rsCurrVal.getInt(1);
+            }
+            rsCurrVal.close();
+
+            // Check if the sequence is behind the max id
+            if (currVal <= maxId) {
+                // Reset the sequence to the next value after the max id
+                String resetSequenceSQL = "SELECT setval('customer_id_seq', ?, false);";
+                try (PreparedStatement resetSeqStmt = con.prepareStatement(resetSequenceSQL)) {
+                    resetSeqStmt.setInt(1, maxId + 1);
+                    resetSeqStmt.execute();
+                }
+            }
+
+            con.close();
+            db.close();
+            // If the sequence is ahead of the max id, there's no need to reset it
+        } catch (Exception e) {
+            throw new SQLException("Error resetting primary key sequence for rent table", e);
         }
     }
 
