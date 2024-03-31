@@ -13,7 +13,7 @@ public class EmployeeService {
 
     public List<Employee> getEmployees() throws Exception {
         List<Employee> employees = new ArrayList<>();
-        String sql = "SELECT * FROM employees";
+        String sql = "SELECT * FROM employee ORDER BY id ASC";
         try (Connection con = db.getConnection(); PreparedStatement stmt = con.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
@@ -33,9 +33,37 @@ public class EmployeeService {
         }
         return employees;
     }
+    public Employee getEmployeeById(int id) throws Exception {
+        Employee employee = null;
+        String sql = "SELECT * FROM employee WHERE id = ?";
+        try (Connection con = db.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setInt(1, id); // Set the ID parameter in the SQL query
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                employee = new Employee(
+                        rs.getInt("id"),
+                        rs.getInt("hotel_id"),
+                        rs.getInt("hotel_chain_id"),
+                        rs.getString("sin"),
+                        rs.getString("full_name"),
+                        rs.getString("address"),
+                        rs.getString("role"));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            throw new Exception("Error while retrieving employee: " + e.getMessage());
+        } finally {
+            db.close();
+        }
+        return employee;
+    }
+
 
     public String createEmployee(Employee employee) throws Exception {
-        String sql = "INSERT INTO employees (hotel_id, hotel_chain_id, sin, full_name, address, role) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO employee (hotel_id, hotel_chain_id, sin, full_name, address, role) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection con = db.getConnection(); PreparedStatement stmt = con.prepareStatement(sql)) {
 
             stmt.setInt(1, employee.getHotelId());
@@ -52,7 +80,7 @@ public class EmployeeService {
     }
 
     public String updateEmployee(Employee employee) throws Exception {
-        String sql = "UPDATE employees SET hotel_id=?, hotel_chain_id=?, sin=?, full_name=?, address=?, role=? WHERE id=?";
+        String sql = "UPDATE employee SET hotel_id=?, hotel_chain_id=?, sin=?, full_name=?, address=?, role=? WHERE id=?";
         try (Connection con = db.getConnection(); PreparedStatement stmt = con.prepareStatement(sql)) {
 
             stmt.setInt(1, employee.getHotelId());
@@ -70,7 +98,7 @@ public class EmployeeService {
     }
 
     public String deleteEmployee(Integer id) throws Exception {
-        String sql = "DELETE FROM employees WHERE id=?";
+        String sql = "DELETE FROM employee WHERE id=?";
         try (Connection con = db.getConnection(); PreparedStatement stmt = con.prepareStatement(sql)) {
 
             stmt.setInt(1, id);
