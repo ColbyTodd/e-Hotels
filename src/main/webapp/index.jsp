@@ -31,6 +31,14 @@
                     <a class="btn btn-primary btn-lg" href="./db_views.jsp" role="button"><h4>Views</h4></a>
                 </div>
             </div>
+            <div class="row">
+                <div class="column" style="padding-top: 20px">
+                    <a class="btn btn-primary btn-lg" href="db_customer.jsp" role="button"><h4>Modify Customers</h4></a>
+                    <a class="btn btn-primary btn-lg" href="db_employee.jsp" role="button"><h4>Modify Employees</h4></a>
+                    <a class="btn btn-primary btn-lg" href="db_hotel.jsp" role="button"><h4>Modify Hotels</h4></a>
+                    <a class="btn btn-primary btn-lg" href="db_room.jsp" role="button"><h4>Modify Rooms</h4></a>
+                </div>
+            </div>
         </div>
         <h1></h1>
     </div>
