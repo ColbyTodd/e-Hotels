@@ -1,3 +1,16 @@
+<%@ page import="java.sql.Connection, java.sql.PreparedStatement" %>
+<%@ page import="com.demo.ConnectionDB" %>
+<%@ page import="com.demo.RentService" %>
+<%@ page import="com.demo.RoomService" %>
+<%@ page import="com.demo.Room" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.sql.Date" %>
+<%@ page import="java.text.ParseException" %>
+<%@ page import="java.sql.SQLException" %>
+<%@ page import="com.demo.Rent" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     int roomId = Integer.parseInt(request.getParameter("roomId"));
     String paymentMethod = request.getParameter("paymentMethod");
@@ -12,7 +25,7 @@
     String resultMessage = "";
 
     // Check if the payment method is either 'Cash' or 'Card'
-    if ("Cash".equals(paymentMethod) || "Card".equals(paymentMethod)) {
+    if ("cash".equals(paymentMethod) || "card".equals(paymentMethod)) {
         // SQL to update the room status to true
         String updateRoomSql = "UPDATE room SET status = true WHERE id = ?";
 
