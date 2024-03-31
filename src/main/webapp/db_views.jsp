@@ -1,106 +1,122 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: vivet
-  Date: 2024-03-29
-  Time: 1:20 p.m.
-  To change this template use File | Settings | File Templates.
---%>
+<%@ page import="java.sql.*, java.util.ArrayList" %>
+<%@ page import="com.demo.ConnectionDB" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
-<html lang="en">
+<html>
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <!-- Bootstrap Date Picker Plugin -->
-    <source src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
-    <source src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js">
-
-    <title>Employee</title>
+    <title>Database Views</title>
+    <!-- Include Bootstrap for styling -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            .container {
+                margin-top: 20px;
+            }
+            .form-group {
+                margin-bottom: 15px;
+            }
+            h2 {
+                margin-bottom: 20px;
+            }
+        </style>
 </head>
 <body>
-<!-- Option Javascript: Bootstrap Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
-<div class="container-fluid">
-    <!-- Title + Return To Home Button -->
-    <div class="text-center">
-        <div class="row">
-            <h2 style="padding-top: 100px; padding-bottom: 20px">E-Hotel Booking Application</h2>
-        </div>
-        <div class="row">
-            <h2>Two Database Views</h2>
-            <div class="column" style="padding-top: 20px">
-                <a class="btn btn-primary btn-lg" href="./index.jsp" role="button"><h4>Home Page</h4></a>
-            </div>
-        </div>
-        <div class="row" style="padding: 20px">
-            <!-- View 1 -->
-            <h3> View 1: Number of available rooms per area</h3>
-            <div class="col-2"></div>
-            <div class="col">
-                <table style="text-align: center; table-layout: fixed; width: 100%">
-                    <thread>
-                        <tr>
-                            <th>City/Area</th> <!-- -->
-                            <th>Number of Available Rooms</th>
-                        </tr>
-                    </thread>
-                    <tbody>
-                    <!-- Make the following tr recursive to go over every row -->
-                    <tr>
-                        <td>
-                            <!-- Insert db query to pull info on 'city' which = string -->
-                            city
-                        </td>
-                        <td>
-                            <!-- Insert db query to pull info on 'count' which = int -->
-                            count
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-2"></div>
-        </div>
-        <div class="row" style="padding: 20px">
-            <!-- View 2 -->
-            <h3>View 2: Aggregated Capacity of Rooms in a Specific Hotel</h3>
-            <div class="col">
-                <table style="text-align: center; table-layout: fixed; width: 100%">
-                    <thread>
-                        <tr>
-                            <th>ID</th>
-                            <th>Hotel</th>
-                            <th>Collective Room Capacity</th>
-                        </tr>
-                    </thread>
-                    <tbody>
-                    <!-- Make the following tr recursive to go over every row -->
-                    <tr>
-                        <td>
-                            <!-- Insert db query to pull info on 'id' which = integer -->
-                            id
-                        </td>
-                        <td>
-                            <!-- Insert db query to pull info on 'name' which = string -->
-                            name
-                        </td>
-                        <td>
-                            <!-- Insert db query to pull info on 'sum' which = int -->
-                            sum
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<body>
+<div class="container">
+    <!-- Return to Home Button -->
+    <div class="text-right mb-3">
+        <a href="./index.jsp" class="btn btn-primary">Return Home</a>
     </div>
-    <h1></h1>
+     <h2>Available Rooms by Area</h2>
+        <form action="db_views.jsp" method="post" class="mb-5">
+            <div class="form-group">
+                Select City:
+                <select name="city" class="form-control">
+                    <option value="">Select a city</option>
+                    <!-- Dynamically populate cities -->
+                    <%
+                        ConnectionDB db = new ConnectionDB();
+                        try (Connection con = db.getConnection();
+                             PreparedStatement ps = con.prepareStatement("SELECT DISTINCT city FROM hotel ORDER BY city");
+                             ResultSet rs = ps.executeQuery()) {
+                            while (rs.next()) {
+                                String city = rs.getString("city");
+                                out.println("<option value='" + city + "'>" + city + "</option>");
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    %>
+                </select>
+            </div>
+            <input type="submit" value="Show Available Rooms" class="btn btn-info">
+        </form>
+
+        <h2>Hotel Capacity</h2>
+        <form action="db_views.jsp" method="post">
+            <div class="form-group">
+                Select Hotel:
+                <select name="hotelId" class="form-control">
+                    <option value="">Select a hotel</option>
+                    <!-- Dynamically populate hotels -->
+                    <%
+                        try (Connection con = db.getConnection();
+                             PreparedStatement ps = con.prepareStatement("SELECT id, name FROM hotel ORDER BY name");
+                             ResultSet rs = ps.executeQuery()) {
+                            while (rs.next()) {
+                                int id = rs.getInt("id");
+                                String name = rs.getString("name");
+                                out.println("<option value='" + id + "'>" + name + "</option>");
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    %>
+                </select>
+            </div>
+            <input type="submit" value="Show Capacity" class="btn btn-info">
+        </form>
+
+
+    <!-- Display Views -->
+    <%
+        String selectedCity = request.getParameter("city");
+        if (selectedCity != null && !selectedCity.isEmpty()) {
+            // Display available rooms by selected city
+            try (Connection con = db.getConnection();
+                 PreparedStatement ps = con.prepareStatement("SELECT * FROM available_rooms_by_area WHERE city = ?");
+                 ) {
+                ps.setString(1, selectedCity);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        String city = rs.getString("city");
+                        int count = rs.getInt("count");
+                        out.println("<p>" + city + ": " + count + " available rooms</p>");
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        String selectedHotelId = request.getParameter("hotelId");
+        if (selectedHotelId != null && !selectedHotelId.isEmpty()) {
+            // Display capacity of the selected hotel
+            try (Connection con = db.getConnection();
+                 PreparedStatement ps = con.prepareStatement("SELECT * FROM hotel_capacity WHERE id = ?");
+                 ) {
+                ps.setInt(1, Integer.parseInt(selectedHotelId));
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        String name = rs.getString("name");
+                        int sum = rs.getInt("sum");
+                        out.println("<p>Hotel " + name + " Capacity: " + sum + "</p>");
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    %>
 </div>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

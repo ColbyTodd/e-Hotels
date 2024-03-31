@@ -100,7 +100,8 @@ today = sdf.parse(sdf.format(today)); // Resetting time to 00:00:00 for accurate
                                                 <option value="Ottawa">Ottawa</option>
                                                 <option value="Toronto">Toronto</option>
                                                 <option value="Montreal">Montreal</option>
-                                                <option value="San Sebastian">San Sebastian</option>
+                                                <option value="Vancouver">Vancouver</option>
+                                                <option value="Quebec">Quebec</option>
                                             </select>
                                             <label for="location">Location</label>
                                         </div>
@@ -240,6 +241,8 @@ today = sdf.parse(sdf.format(today)); // Resetting time to 00:00:00 for accurate
                                     <button id="button<%= room.getId() %>"
                                             onclick="bookRoom(this)"
                                             data-room-id="<%= room.getId() %>"
+                                            data-hotel-id="<%= room.getHotelId() %>"
+                                            data-hotel-chain-id="<%= room.getHotelChainId() %>"
                                             data-start-date="<%= sdf.format(searchStartDate) %>"
                                             data-end-date="<%= sdf.format(searchEndDate) %>">Book</button>
 
@@ -267,6 +270,8 @@ today = sdf.parse(sdf.format(today)); // Resetting time to 00:00:00 for accurate
        function bookRoom(button) {
            console.log("Book room function called");
            var roomId = button.getAttribute("data-room-id");
+           var hotelId = button.getAttribute('data-hotel-id');
+           var hotelChainId = button.getAttribute('data-hotel-chain-id');
            var startDate = button.getAttribute("data-start-date");
            var endDate = button.getAttribute("data-end-date");
 
@@ -294,7 +299,7 @@ today = sdf.parse(sdf.format(today)); // Resetting time to 00:00:00 for accurate
            };
            xhttp.open("POST", "bookRoom.jsp", true);
            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-           xhttp.send(`roomId=${roomId}&startDate=${startDate}&endDate=${endDate}`);
+           xhttp.send(`roomId=${roomId}&hotelId=${hotelId}&hotelChainId=${hotelChainId}&startDate=${startDate}&endDate=${endDate}`);
        }
   </script>
 

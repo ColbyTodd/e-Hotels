@@ -13,9 +13,9 @@
 <%
     int roomId = Integer.parseInt(request.getParameter("roomId"));
     // This needs to be dynamically determined or passed correctly
+    int hotelId = Integer.parseInt(request.getParameter("hotelId"));
+    int hotelChainId = Integer.parseInt(request.getParameter("hotelChainId"));
     int customerId = 1;
-    int hotelId = 1;
-    int hotelChainId = 1;
     Date startDate = Date.valueOf(request.getParameter("startDate"));
     Date endDate = Date.valueOf(request.getParameter("endDate"));
     String payment = null; // Assuming you will handle payment details later
