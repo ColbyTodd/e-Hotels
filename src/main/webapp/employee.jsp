@@ -1,12 +1,19 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: vivet
-  Date: 2024-03-25
-  Time: 2:45 p.m.
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.demo.RentService" %>
+<%@ page import="com.demo.RoomService" %>
+<%@ page import="com.demo.Room" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.text.ParseException" %>
+<%@ page import="java.util.Calendar" %>
 
+<%
+    RoomService roomService = new RoomService();
+    RentService rentService = new RentService();
+    List<Room> roomsToApprove = roomService.getFalseStatusRooms();
+%>
 <html lang="en">
 <head>
     <!-- Required meta tags -->
@@ -94,68 +101,75 @@
             <div class="row" style="padding: 20px">
                 <!-- Turn Bookings into Rentings -->
                 <h3>Turn existing customer bookings into rentings</h3>
-                <div class="col">
-                    <table style="text-align: center; table-layout: fixed; width: 100%">
-                        <thread>
+                <div class="container mt-4">
+                    <h2>Bookings Pending Approval</h2>
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <th>Customer Bookings</th>
+                                <th>Room ID</th>
+                                <th>Hotel ID</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
                                 <th>Payment Method</th>
-                                <th>Turn into a Renting</th>
+                                <th>Action</th>
                             </tr>
-                        </thread>
+                        </thead>
                         <tbody>
-                        <!-- Loop until every booking is shown -->
-                        <tr>
-                            <td>Booking ID / identifier used</td>
-                            <td>
-                                <div class="calender-box">
-                                    <div class="form-floating" style="padding-top: 5px">
-                                        <!-- Location options should depend on the database -->
-                                        <select class="form-select" id="floatingSelect1" aria-label="Location">
-                                            <option selected>Select Payment Type</option>
-                                            <option value="0">Card</option>
-                                            <option value="1">Cash</option>
-                                        </select>
-                                        <label for="floatingSelect1">Payment Type</label>
-                                    </div>
-                                </div>
-                            </td>
-                            <form method="POST" action="delete-grade-controller.jsp">
+                            <%
+                                for (Room room : roomsToApprove) {
+                            %>
+                            <tr>
+                                <td><%= room.getId() %></td>
+                                <td><%= room.getHotelId() %></td>
+                                <td><%= room.getStartDate() != null ? room.getStartDate().toString() : "N/A" %></td>
+                                <td><%= room.getEndDate() != null ? room.getEndDate().toString() : "N/A" %></td>
                                 <td>
-                                    <input type="hidden" value="insert java formula here" name="id" />
-                                    <a class="btn btn-primary btn-lg" role="button" type="submit">Approve Rental</a>
+                                    <select id="paymentMethod<%= room.getId() %>" class="form-select">
+                                        <option selected value="">No payment selected</option>
+                                        <option value="card">Card</option>
+                                        <option value="cash">Cash</option>
+                                    </select>
                                 </td>
-                            </form>
-                        </tr>
-                        <!-- Loop above - 2nd iteration below -->
-                        <tr>
-                            <td>Booking ID / identifier used</td>
-                            <td>
-                                <div class="calender-box">
-                                    <div class="form-floating" style="padding-top: 5px">
-                                        <!-- Location options should depend on the database -->
-                                        <select class="form-select" id="floatingSelect2" aria-label="Payment">
-                                            <option selected>Select Payment Type</option>
-                                            <option value="0">Card</option>
-                                            <option value="1">Cash</option>
-                                        </select>
-                                        <label for="floatingSelect2">Payment Type</label>
-                                    </div>
-                                </div>
-                            </td>
-                            <form method="POST" action="delete-grade-controller.jsp">
                                 <td>
-                                    <input type="hidden" value="insert java formula here" name="id" />
-                                    <a class="btn btn-primary btn-lg" role="button" type="submit">Approve Rental</a>
+                                    <button onclick="approveRental(<%= room.getId() %>)" class="btn btn-primary">Approve Rental</button>
                                 </td>
-                            </form>
-                        </tr>
+                            </tr>
+                            <%
+                                }
+                            %>
                         </tbody>
                     </table>
                 </div>
+
             </div>
         </div>
         <h1></h1>
     </div>
+   <script>
+       function approveRental(roomId) {
+           var paymentMethodSelect = document.getElementById("paymentMethod" + roomId);
+           var paymentMethod = paymentMethodSelect.value;
+
+           var xhttp = new XMLHttpRequest();
+           xhttp.onreadystatechange = function() {
+               if (this.readyState == 4 && this.status == 200) {
+                   // Check for a successful response, you might need to adjust based on what approveRental.jsp returns
+                   var response = this.responseText.trim();
+                   if(response.toLowerCase() === "rental approved successfully!") {
+                       alert("Rental approved successfully!");
+                       window.location.reload(); // Refresh the page to update the table
+                   } else {
+                       alert("Failed to approve rental: " + response);
+                   }
+               }
+           };
+           xhttp.open("POST", "approveRental.jsp", true);
+           xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+           // Correctly format the data to be sent in the POST request
+           xhttp.send(`roomId=${roomId}&paymentMethod=${paymentMethod}`);
+       }
+   </script>
+
+
 </body>
 </html>
