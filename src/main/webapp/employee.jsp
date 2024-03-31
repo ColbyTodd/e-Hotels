@@ -36,68 +36,24 @@
     <div class="container-fluid">
         <!-- Title + Return To Home Button -->
         <div class="text-center">
-            <div class="row">
-                <h2 style="padding-top: 100px; padding-bottom: 20px">E-Hotel Booking Application</h2>
-            </div>
-            <div class="row">
-                <h2>I Am An Employee</h2>
-                <div class="column" style="padding-top: 20px">
-                    <a class="btn btn-primary btn-lg" href="./index.jsp" role="button"><h4>Home Page</h4></a>
-                </div>
-            </div>
             <div class="row" style="padding: 20px">
-                <!-- Create a renting on the spot -->
                 <h3>Create a new renting</h3>
                 <div class="col">
-                    <table style="text-align: center; table-layout: fixed; width: 100%">
-                        <thread>
-                            <tr>
-                                <th>Start - End Date <span style="color: #ff0000">(Mandatory)</span></th>
-                                <th>Payment Method</th> <!-- if mandatory add red tag -->
-                                <th>Create Renting</th>
-                            </tr>
-                        </thread>
-                        <tbody>
-                        <tr>
-                            <td>
-                                <div class="calender-box" style="padding-left: 5px; padding-right: 25px">
-                                    <form>
-                                        <!-- Start & End Date -->
-                                        <div class="row">
-                                            <label for="date1">Start:</label>
-                                            <input type="date" id="date1" name="date" required>
-                                        </div>
-                                        <div class="row" style="padding-top: 5px">
-                                            <label for="date2">End:</label>
-                                            <input type="date" id="date2" name="date" required>
-                                        </div>
-                                    </form>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="calender-box">
-                                    <div class="form-floating" style="padding-top: 5px">
-                                        <!-- Location options should depend on the database -->
-                                        <select class="form-select" id="floatingSelect3" aria-label="Payment">
-                                            <option selected>Select Payment Type</option>
-                                            <option value="0">Card</option>
-                                            <option value="1">Cash</option>
-                                        </select>
-                                        <label for="floatingSelect3">Payment Type</label>
-                                    </div>
-                                </div>
-                            </td>
-                            <form method="POST" action="delete-grade-controller.jsp">
-                                <td>
-                                    <input type="hidden" value="insert java formula here" name="id" />
-                                    <a class="btn btn-primary btn-lg" role="button" type="submit">Create Rental</a>
-                                </td>
-                            </form>
-                        </tr>
-                        </tbody>
-                    </table>
+                    <form id="createRentalForm">
+                        Start Date: <input type="date" id="startDate" name="startDate" required><br>
+                        End Date: <input type="date" id="endDate" name="endDate" required><br>
+                        Payment Method:
+                        <select id="paymentMethod" name="paymentMethod" required>
+                            <option value="">Select Payment Type</option>
+                            <option value="card">Card</option>
+                            <option value="cash">Cash</option>
+                        </select><br>
+                        <button type="button" onclick="createRental()">Create Rental</button>
+                    </form>
+
                 </div>
             </div>
+
             <div class="row" style="padding: 20px">
                 <!-- Turn Bookings into Rentings -->
                 <h3>Turn existing customer bookings into rentings</h3>
@@ -169,7 +125,26 @@
            xhttp.send(`roomId=${roomId}&paymentMethod=${paymentMethod}`);
        }
    </script>
+   <script>
+       function createRental() {
+           var form = document.getElementById("createRentalForm");
+           var startDate = form["startDate"].value;
+           var endDate = form["endDate"].value;
+           var paymentMethod = form["paymentMethod"].value;
 
+           var xhttp = new XMLHttpRequest();
+           xhttp.onreadystatechange = function() {
+               if (this.readyState == 4 && this.status == 200) {
+                   var response = this.responseText.trim();
+                   alert(response); // Display the response from createRental.jsp
+                   location.reload(); // Optionally refresh to show the updated list or update the UI accordingly
+               }
+           };
+           xhttp.open("POST", "createRental.jsp", true);
+           xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+           xhttp.send(`startDate=${startDate}&endDate=${endDate}&paymentMethod=${paymentMethod}`);
+       }
+   </script>
 
 </body>
 </html>
