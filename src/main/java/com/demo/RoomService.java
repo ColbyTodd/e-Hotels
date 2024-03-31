@@ -106,20 +106,52 @@ public class RoomService {
         }
     }
 
-    // may need to use these later
-    public List<Room> getFalseStatusRooms() throws Exception {
-        List<Room> rooms = new ArrayList<>();
-        // Include condition for payment to be NULL or empty
-        String sql = "SELECT r.*, rent.start_date, rent.end_date FROM room r " +
-                "INNER JOIN rent ON r.id = rent.room_id " +
-                "WHERE r.status = false AND (rent.payment IS NULL OR rent.payment = '')";
-        ConnectionDB db = new ConnectionDB();
-        try (Connection con = db.getConnection();
-             PreparedStatement stmt = con.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
 
+
+
+    public List<Room> testGetSpecifiedRooms(Integer capacity) throws Exception {
+        List<Room> rooms = new ArrayList<>();
+        List<Object> params = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder("SELECT * FROM room WHERE capacity = 4;");
+        ConnectionDB db = new ConnectionDB();
+
+
+        try (Connection con = db.getConnection()) {
+            PreparedStatement stmt = con.prepareStatement(sql.toString());
+
+            // Set the parameters on the statement
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    rooms.add(new Room(
+                            rs.getInt("id"),
+                            rs.getInt("hotel_id"),
+                            rs.getInt("hotel_chain_id"),
+                            rs.getInt("price"),
+                            rs.getString("amenities"),
+                            rs.getInt("capacity"),
+                            rs.getString("room_view"),
+                            rs.getBoolean("extendable"),
+                            rs.getBoolean("problems"),
+                            rs.getBoolean("status")));
+                }
+                return rooms;
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+
+    // may need to use these later
+    public List<Room> getRooms() throws Exception {
+        List<Room> rooms = new ArrayList<>();
+        String sql = "SELECT * FROM room";
+        ConnectionDB db = new ConnectionDB();
+        try (Connection con = db.getConnection(); PreparedStatement stmt = con.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                Room room = new Room(
+                rooms.add(new Room(
                         rs.getInt("id"),
                         rs.getInt("hotel_id"),
                         rs.getInt("hotel_chain_id"),
@@ -129,21 +161,13 @@ public class RoomService {
                         rs.getString("room_view"),
                         rs.getBoolean("extendable"),
                         rs.getBoolean("problems"),
-                        rs.getBoolean("status"),
-                        rs.getDate("start_date"),
-                        rs.getDate("end_date")
-                        // Add other Room fields if needed
-                );
-                rooms.add(room);
+                        rs.getBoolean("status")));
             }
-        } catch (Exception e) {
-            throw new Exception("Failed to fetch bookings with status false and payment not processed: " + e.getMessage(), e);
         } finally {
             db.close();
         }
         return rooms;
     }
-
 
     public String createRoom(Room room) throws Exception {
         String sql = "INSERT INTO room (hotel_id, hotel_chain_id, price, amenities, capacity, room_view, extendable, problems, room_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
