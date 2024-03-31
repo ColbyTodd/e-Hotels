@@ -5,28 +5,30 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Date;
-import java.util.HashSet;
+import java.util.*;
 
 public class RoomService {
-    public List<Room> getSpecifiedRooms(Integer capacity, Integer maxPrice, Integer hotelChain, Integer size, Date startDate, Date endDate, Integer category, String city) throws Exception {
+    public List<Room> getSpecifiedRooms(Integer capacity, Integer maxPrice, Integer hotelChain, Integer size, Date startDate,
+                                        Date endDate, Integer category, String city) throws Exception {
         List<Room> rooms = new ArrayList<>();
-        HashSet<Integer> addedRoomIds = new HashSet<>(); // Set to track added room IDs
         List<Object> params = new ArrayList<>();
 
+        // Add date parameters first
+        params.add(new java.sql.Date(startDate.getTime()));
+        params.add(new java.sql.Date(endDate.getTime()));
+        params.add(new java.sql.Date(startDate.getTime()));
+        params.add(new java.sql.Date(endDate.getTime()));
 
-        // Starting SQL with a join to include hotel information
         StringBuilder sql = new StringBuilder(
-                "SELECT DISTINCT room.*, rent.start_date, rent.end_date, hotel.number_of_rooms, hotel.category, hotel.city " +
+                "SELECT room.*, hotel.number_of_rooms, hotel.category, hotel.city " +
                         "FROM room " +
                         "JOIN hotel ON room.hotel_id = hotel.id " +
-                        "LEFT JOIN rent ON room.id = rent.room_id " +
-                        "WHERE 1=1"
-        );
-        ConnectionDB db = new ConnectionDB();
+                        "WHERE room.status = false AND room.id NOT IN (" +
+                        "SELECT rent.room_id FROM rent " +
+                        "WHERE (rent.start_date < ? AND rent.end_date > ?) OR " +
+                        "(rent.start_date > ? AND rent.start_date < ?))");
 
+        // Append additional filters and add them to the parameters list
         if (capacity != null && capacity > 0) {
             sql.append(" AND room.capacity = ?");
             params.add(capacity);
@@ -43,14 +45,6 @@ public class RoomService {
             sql.append(" AND hotel.number_of_rooms <= ?");
             params.add(size);
         }
-        if (startDate != null) {
-            sql.append(" AND rent.start_date >= ?");
-            params.add(new java.sql.Date(startDate.getTime()));
-        }
-        if (endDate != null) {
-            sql.append(" AND rent.end_date <= ?");
-            params.add(new java.sql.Date(endDate.getTime()));
-        }
         if (category != null && category > 0) {
             sql.append(" AND hotel.category = ?");
             params.add(category);
@@ -59,41 +53,59 @@ public class RoomService {
             sql.append(" AND hotel.city = ?");
             params.add(city);
         }
-        System.out.println("hi");
-        System.out.println(sql);
 
-        try (Connection con = db.getConnection()) {
-            PreparedStatement stmt = con.prepareStatement(sql.toString());
-
+        ConnectionDB db = new ConnectionDB();
+        try (Connection con = db.getConnection(); PreparedStatement stmt = con.prepareStatement(sql.toString())) {
             for (int i = 0; i < params.size(); i++) {
                 stmt.setObject(i + 1, params.get(i));
             }
-            ResultSet rs = stmt.executeQuery();
 
+            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                int roomId = rs.getInt("id");
-                if (!addedRoomIds.contains(roomId)) { // Check if the room ID has already been added
-                    Room room = new Room(
-                            roomId,
-                            rs.getInt("hotel_id"),
-                            rs.getInt("hotel_chain_id"),
-                            rs.getInt("price"),
-                            rs.getString("amenities"),
-                            rs.getInt("capacity"),
-                            rs.getString("room_view"),
-                            rs.getBoolean("extendable"),
-                            rs.getBoolean("problems"),
-                            rs.getBoolean("status"));
-                    rooms.add(room);
-                    addedRoomIds.add(roomId); // Remember this room ID as added
-                }
+                Room room = new Room(
+                        rs.getInt("id"),
+                        rs.getInt("hotel_id"),
+                        rs.getInt("hotel_chain_id"),
+                        rs.getInt("price"),
+                        rs.getString("amenities"),
+                        rs.getInt("capacity"),
+                        rs.getString("room_view"),
+                        rs.getBoolean("extendable"),
+                        rs.getBoolean("problems"),
+                        rs.getBoolean("status"),// Assuming false means available
+                        null, // Not setting start and end dates for the room object here
+                        null,
+                        rs.getInt("number_of_rooms"),
+                        rs.getInt("category"),
+                        rs.getString("city"));
+                rooms.add(room);
             }
-            return rooms;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
-            throw new Exception(e.getMessage());
+            throw new SQLException("Error fetching specified rooms: " + e.getMessage(), e);
+        }
+
+        return rooms;
+    }
+    public void updateRoomStatus(Integer roomId) throws SQLException {
+        // Your SQL to update the room's booked and rented status
+        String sql = "UPDATE room SET status=? WHERE id=?;";
+        ConnectionDB db = new ConnectionDB();
+        try (Connection con = db.getConnection()){
+         PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setBoolean(1, true);
+            stmt.setInt(2, roomId);
+            stmt.executeUpdate();
+
+            stmt.close();
+            con.close();
+            db.close();
+
+        } catch (Exception e) {
+            throw new SQLException("Error updating room status", e);
         }
     }
+
 
 
 

@@ -6,7 +6,27 @@
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.text.ParseException" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.Calendar" %>
+<%
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+Date searchStartDate = null;
+Date searchEndDate = null;
+try {
+    // Assuming the dates were stored as String. Attempt to parse them back to Date objects.
+    String startStr = (String)session.getAttribute("searchStartDate");
+    String endStr = (String)session.getAttribute("searchEndDate");
+    if (startStr != null && endStr != null) {
+        searchStartDate = sdf.parse(startStr);
+        searchEndDate = sdf.parse(endStr);
+    }
+} catch (ParseException e) {
+    e.printStackTrace();
+    // Handle parse exception here, maybe set an error message to display to the user
+}
 
+Date today = new Date(); // Get today's date
+today = sdf.parse(sdf.format(today)); // Resetting time to 00:00:00 for accurate comparison
+%>
 <html lang="en">
 <head>
     <!-- Required meta tags -->
@@ -80,7 +100,7 @@
                                                 <option value="Ottawa">Ottawa</option>
                                                 <option value="Toronto">Toronto</option>
                                                 <option value="Montreal">Montreal</option>
-                                                <option value="Vancouver">Vancouver</option>
+                                                <option value="San Sebastian">San Sebastian</option>
                                             </select>
                                             <label for="location">Location</label>
                                         </div>
@@ -169,7 +189,7 @@
                     </table>
                 </div>
             </form>
-            <!-- Insert this after the form in customer.jsp -->
+
             <div class="container mt-4">
                 <h2>Search Results</h2>
                 <table class="table">
@@ -185,42 +205,57 @@
                             <th>Extendable</th>
                             <th>Problems</th>
                             <th>Status</th>
+                            <th>Hotel Size</th>
+                            <th>Category</th>
+                            <th>City</th>
+                            <th>Rent Start Date</th>
+                            <th>Rent End Date</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <%
                         List<Room> rooms = (List<Room>) session.getAttribute("roomsResults");
-                        List<Room> roomsDebug = (List<Room>) session.getAttribute("roomsResults");
-                            if (roomsDebug != null) {
-                                out.println("<h3>Debug: Session 'roomsResults' contains " + roomsDebug.size() + " rooms.</h3>");
-                            } else {
-                                out.println("<h3>Debug: Session 'roomsResults' is null or not set.</h3>");
-                            }
                         if (rooms != null && !rooms.isEmpty()) {
                             for (Room room : rooms) {
-                                %>
-                                <tr>
-                                    <td><%= room.getId() %></td>
-                                    <td><%= room.getHotelId() %></td>
-                                    <td><%= room.getHotelChainId() %></td>
-                                    <td><%= room.getPrice() %></td>
-                                    <td><%= room.getAmenities() %></td>
-                                    <td><%= room.getCapacity() %></td>
-                                    <td><%= room.getRoomView() %></td>
-                                    <td><%= room.getExtendable() ? "Yes" : "No" %></td>
-                                    <td><%= room.getProblems() ? "Yes" : "No" %></td>
-                                    <td><%= room.getStatus() ? "Available" : "Not Available" %></td>
-                                </tr>
-                                <%
+                        %>
+                        <tr>
+                            <td><%= room.getId() %></td>
+                            <td><%= room.getHotelId() %></td>
+                            <td><%= room.getHotelChainId() %></td>
+                            <td><%= room.getPrice() %></td>
+                            <td><%= room.getAmenities() %></td>
+                            <td><%= room.getCapacity() %></td>
+                            <td><%= room.getRoomView() %></td>
+                            <td><%= room.getExtendable() %></td>
+                            <td><%= room.getProblems() %></td>
+                            <td><%= room.getStatus() %></td>
+                            <td><%= room.getNumberOfRooms() %></td>
+                            <td><%= room.getCategory() %></td>
+                            <td><%= room.getCity() %></td>
+                            <td><%= sdf.format(searchStartDate) %></td>
+                            <td><%= sdf.format(searchEndDate) %></td>
+                            <td>
+                                <% if (!room.getStatus()) { %>
+                                    <button id="button<%= room.getId() %>"
+                                            onclick="bookRoom(this)"
+                                            data-room-id="<%= room.getId() %>"
+                                            data-start-date="<%= sdf.format(searchStartDate) %>"
+                                            data-end-date="<%= sdf.format(searchEndDate) %>">Book</button>
+
+                                <% } else { %>
+                                    <button disabled>Unavailable</button>
+                                <% } %>
+                            </td>
+                        </tr>
+                        <%
                             }
-                            // Clear the attribute after use to prevent stale data on refresh
-                            session.removeAttribute("roomsResults");
                         } else {
-                            %>
-                            <tr>
-                                <td colspan="10">No results found.</td>
-                            </tr>
-                            <%
+                        %>
+                        <tr>
+                            <td colspan="16">No results found.</td>
+                        </tr>
+                        <%
                         }
                         %>
                     </tbody>
@@ -228,6 +263,43 @@
             </div>
         </div>
     </div>
+  <script>
+       function bookRoom(button) {
+           console.log("Book room function called");
+           var roomId = button.getAttribute("data-room-id");
+           var startDate = button.getAttribute("data-start-date");
+           var endDate = button.getAttribute("data-end-date");
+
+           var xhttp = new XMLHttpRequest();
+           xhttp.onreadystatechange = function() {
+               // Only execute this block if the request is complete
+               if (this.readyState == 4) {
+                   // Check if the request was successful
+                   if (this.status == 200) {
+                       var responseText = this.responseText.trim();
+                       console.log("Server response:", responseText); // Log the response for debugging
+                       button.disabled = true;
+                       button.innerText = 'Unavailable';
+                       alert("Room booked successfully!");
+                   } else {
+                       // Only alert on failures once the request is complete
+                       alert("Failed to book room: " + this.statusText);
+                   }
+               }
+           };
+           xhttp.open("POST", "bookRoom.jsp", true);
+           xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+           xhttp.send(`roomId=${roomId}&startDate=${startDate}&endDate=${endDate}`);
+       }
+  </script>
+
+
+
+
+
+
+
+
 
 </body>
 </html>

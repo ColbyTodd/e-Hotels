@@ -13,6 +13,7 @@
 </head>
 <body>
     <%
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date startDate = null;
         String startDateStr = request.getParameter("startDate");
@@ -109,6 +110,8 @@
 
         System.out.println(rooms);
         session.setAttribute("roomsResults", rooms);
+        session.setAttribute("searchStartDate", request.getParameter("startDate"));
+        session.setAttribute("searchEndDate", request.getParameter("endDate"));
         response.sendRedirect("customer.jsp");
     %>
 </body>
