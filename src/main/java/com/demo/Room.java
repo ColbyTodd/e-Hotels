@@ -57,8 +57,8 @@ public class Room {
         this.status = status;
     }
     public Room(Integer id, Integer hotelId, Integer hotelChainId, Integer price, String amenities, Integer capacity, String roomView,
-                Boolean extendable, Boolean problems, Boolean status, Date startDate, Date endDate,
-                Integer numberOfRooms, Integer category, String city, Boolean booked, Boolean rented) {
+                Boolean extendable, Boolean problems, Boolean status, Date startDate, Date endDate
+               ) {
         // Initialize existing fields
         this.id = id;
         this.hotelId = hotelId;
@@ -72,11 +72,7 @@ public class Room {
         this.status = status;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.numberOfRooms = numberOfRooms;
-        this.category = category;
-        this.city = city;
-        this.booked = booked;
-        this.rented = rented;
+
     }
 
     public Room(Integer id, Integer hotelId, Integer hotelChainId, Integer price, String amenities, Integer capacity, String roomView, Boolean extendable, Boolean problems, Boolean status, Date startDate, Date endDate, Integer numberOfRooms, Integer category, String city) {
