@@ -18,6 +18,8 @@
     String startDateStr = request.getParameter("startDate");
     String endDateStr = request.getParameter("endDate");
     String paymentMethod = request.getParameter("paymentMethod");
+    int hotelId = Integer.parseInt(request.getParameter("hotelId"));
+    int hotelChainId = Integer.parseInt(request.getParameter("hotelChainId"));
 
     // Conversion to SQL Date
     Date startDate = Date.valueOf(startDateStr);
@@ -38,12 +40,14 @@
 
         // Step 2: Create a new rent row with the captured data
         if(roomId > 0){
-            String insertQuery = "INSERT INTO rent (room_id, start_date, end_date, payment) VALUES (?, ?, ?, ?)";
+            String insertQuery = "INSERT INTO rent (room_id, hotel_id, hotel_chain_id, start_date, end_date, payment) VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement pstmt = con.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
             pstmt.setInt(1, roomId);
-            pstmt.setDate(2, startDate);
-            pstmt.setDate(3, endDate);
-            pstmt.setString(4, paymentMethod);
+            pstmt.setDate(2, hotelId);
+            pstmt.setDate(3, hotelChainId);
+            pstmt.setDate(4, startDate);
+            pstmt.setDate(5, endDate);
+            pstmt.setString(6, paymentMethod);
             pstmt.executeUpdate();
 
             // Update room status to true to indicate it's now rented
