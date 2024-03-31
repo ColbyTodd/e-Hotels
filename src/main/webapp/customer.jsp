@@ -264,31 +264,35 @@ today = sdf.parse(sdf.format(today)); // Resetting time to 00:00:00 for accurate
         </div>
     </div>
   <script>
-     function bookRoom(button) {
-         console.log("Book room function called");
-         var roomId = button.getAttribute("data-room-id");
-         var startDate = button.getAttribute("data-start-date");
-         var endDate = button.getAttribute("data-end-date");
+       function bookRoom(button) {
+           console.log("Book room function called");
+           var roomId = button.getAttribute("data-room-id");
+           var startDate = button.getAttribute("data-start-date");
+           var endDate = button.getAttribute("data-end-date");
 
-         var xhttp = new XMLHttpRequest();
-         xhttp.onreadystatechange = function() {
-             if (this.readyState == 4 && this.status == 200) {
-                 var responseText = this.responseText.trim();
-
-                 if (responseText.toLowerCase() === "success") {
-                     button.disabled = true;
-                     button.innerText = 'Unavailable';
-                     alert("Room booked successfully!"); // You can change this to a success message instead
-                 } else {
-                     alert("Failed to book room: " + responseText);
-                 }
-             }
-         };
-         xhttp.open("POST", "bookRoom.jsp", true);
-         xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-         xhttp.send(`roomId=${roomId}&startDate=${startDate}&endDate=${endDate}`);
-     }
+           var xhttp = new XMLHttpRequest();
+           xhttp.onreadystatechange = function() {
+               // Only execute this block if the request is complete
+               if (this.readyState == 4) {
+                   // Check if the request was successful
+                   if (this.status == 200) {
+                       var responseText = this.responseText.trim();
+                       console.log("Server response:", responseText); // Log the response for debugging
+                       button.disabled = true;
+                       button.innerText = 'Unavailable';
+                       alert("Room booked successfully!");
+                   } else {
+                       // Only alert on failures once the request is complete
+                       alert("Failed to book room: " + this.statusText);
+                   }
+               }
+           };
+           xhttp.open("POST", "bookRoom.jsp", true);
+           xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+           xhttp.send(`roomId=${roomId}&startDate=${startDate}&endDate=${endDate}`);
+       }
   </script>
+
 
 
 

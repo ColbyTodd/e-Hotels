@@ -72,7 +72,7 @@ public class RoomService {
                         rs.getString("room_view"),
                         rs.getBoolean("extendable"),
                         rs.getBoolean("problems"),
-                        false, // Assuming false means available
+                        rs.getBoolean("status"),// Assuming false means available
                         null, // Not setting start and end dates for the room object here
                         null,
                         rs.getInt("number_of_rooms"),
