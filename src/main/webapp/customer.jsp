@@ -281,11 +281,16 @@ today = sdf.parse(sdf.format(today)); // Resetting time to 00:00:00 for accurate
                if (this.readyState == 4) {
                    // Check if the request was successful
                    if (this.status == 200) {
-                       var responseText = this.responseText.trim();
-                       console.log("Server response:", responseText); // Log the response for debugging
-                       button.disabled = true;
-                       button.innerText = 'Unavailable';
-                       alert("Room booked successfully!");
+                       if (startDate < endDate) {
+                           var responseText = this.responseText.trim();
+                           console.log("Server response:", responseText); // Log the response for debugging
+                           button.disabled = true;
+                           button.innerText = 'Unavailable';
+                           alert("Room booked successfully!");
+                       } else {
+                           // Start date must be <= end date
+                           alert("Start date must be < end date");
+                       }
                    } else {
                        // Only alert on failures once the request is complete
                        alert("Failed to book room: " + this.statusText);
