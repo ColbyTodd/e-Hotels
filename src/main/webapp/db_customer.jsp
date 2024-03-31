@@ -1,5 +1,9 @@
 <%@ page import="com.demo.ConnectionDB, com.demo.Customer, com.demo.CustomerService" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
+
+
 <html>
 <head>
     <title>Create Customer</title>
@@ -34,21 +38,49 @@
         CustomerService customerService = new CustomerService();
         String resultMessage = customerService.createCustomer(customer);
 
-        // Use session to pass the result message to the redirected page
-        request.getSession().setAttribute("resultMessage", resultMessage);
-
-        // Redirect to prevent form re-submission
-        response.sendRedirect("db_customer.jsp");
-        return; // Stop further processing
-    }
-
-    // Retrieve and clear the message from session after redirect
-    String resultMessage = (String) request.getSession().getAttribute("resultMessage");
-    if (resultMessage != null) {
+        // Display result
         out.println("<p>" + resultMessage + "</p>");
-        request.getSession().removeAttribute("resultMessage");
     }
 %>
+<h2>Customer List</h2>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Full Name</th>
+        <th>Address</th>
+        <th>ID Type</th>
+        <th>Registration Date</th>
+        <th>Action</th>
+        <th>Update</th>
+    </tr>
+    <%
+        CustomerService customerService = new CustomerService();
+        List<Customer> customers = customerService.getCustomers();
+        for(Customer customer : customers){
+    %>
+    <tr>
+        <td><%= customer.getId() %></td>
+        <td><%= customer.getFullName() %></td>
+        <td><%= customer.getAddress() %></td>
+        <td><%= customer.getIdType() %></td>
+        <td><%= customer.getRegistrationDate().toString() %></td>
+        <td>
+            <form action="delete_customer.jsp" method="post">
+                <input type="hidden" name="customerId" value="<%= customer.getId() %>" />
+                <input type="submit" value="Delete" />
+            </form>
+        </td>
+        <td>
+            <form action="updateCustomer.jsp" method="get">
+                <input type="hidden" name="customerId" value="<%= customer.getId() %>" />
+                <input type="submit" value="Update" />
+            </form>
+        </td>
 
+    </tr>
+    <%
+        }
+    %>
+</table>
 </body>
 </html>
