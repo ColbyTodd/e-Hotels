@@ -18,47 +18,48 @@
     String startDateStr = request.getParameter("startDate");
     String endDateStr = request.getParameter("endDate");
     String paymentMethod = request.getParameter("paymentMethod");
-    int hotelId = Integer.parseInt(request.getParameter("hotelId"));
-    int hotelChainId = Integer.parseInt(request.getParameter("hotelChainId"));
 
     // Conversion to SQL Date
     Date startDate = Date.valueOf(startDateStr);
     Date endDate = Date.valueOf(endDateStr);
 
-    ConnectionDB db = new ConnectionDB(); // Your DB connection class
+    ConnectionDB db = new ConnectionDB();
     Connection con = db.getConnection();
 
     try {
-        // Step 1: Select an available roomId with status = false
-        String roomIdQuery = "SELECT id FROM room WHERE status = false LIMIT 1";
+        // Modified Step 1: Select an available roomId along with its hotelId and hotelChainId where status is false
+        String roomIdQuery = "SELECT id, hotel_id, hotel_chain_id FROM room WHERE status = false LIMIT 1";
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(roomIdQuery);
-        int roomId = 0;
+        int roomId = 0, hotelId = 0, hotelChainId = 0;
         if (rs.next()) {
             roomId = rs.getInt("id");
+            hotelId = rs.getInt("hotel_id");
+            hotelChainId = rs.getInt("hotel_chain_id");
         }
 
-        // Step 2: Create a new rent row with the captured data
+        // Proceed if an available room was found
         if(roomId > 0){
             String insertQuery = "INSERT INTO rent (room_id, hotel_id, hotel_chain_id, start_date, end_date, payment) VALUES (?, ?, ?, ?, ?, ?)";
-            PreparedStatement pstmt = con.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = con.prepareStatement(insertQuery);
             pstmt.setInt(1, roomId);
-            pstmt.setDate(2, hotelId);
-            pstmt.setDate(3, hotelChainId);
+            pstmt.setInt(2, hotelId);
+            pstmt.setInt(3, hotelChainId);
             pstmt.setDate(4, startDate);
             pstmt.setDate(5, endDate);
             pstmt.setString(6, paymentMethod);
             pstmt.executeUpdate();
 
-            // Update room status to true to indicate it's now rented
+            // Update room status to indicate it's now rented
             String updateRoomStatus = "UPDATE room SET status = true WHERE id = ?";
             PreparedStatement pstmtUpdate = con.prepareStatement(updateRoomStatus);
             pstmtUpdate.setInt(1, roomId);
             pstmtUpdate.executeUpdate();
-        }
 
-        // Step 3: Optionally, display the newly created rent row (or redirect to a confirmation page)
-        out.println("Rental Created Successfully for Room ID: " + roomId);
+            out.println("Rental Created Successfully for Room ID: " + roomId);
+        } else {
+            out.println("No available rooms found.");
+        }
     } catch (Exception e) {
         out.println("Error: " + e.getMessage());
     } finally {

@@ -60,7 +60,7 @@
                             <div class="col-12">
                                 <label for="paymentMethod" class="form-label">Payment Method:</label>
                                 <select id="paymentMethod" name="paymentMethod" class="form-select" required>
-                                    <option value="">Select Payment Type</option>
+                                    <option value="">No Payment Selected</option>
                                     <option value="card">Card</option>
                                     <option value="cash">Cash</option>
                                 </select>
@@ -106,7 +106,12 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <button onclick="approveRental(<%= room.getId() %>)" class="btn btn-primary">Approve Rental</button>
+                                    <button onclick="approveRental(this)"
+                                            data-room-id="<%= room.getId() %>"
+                                            data-hotel-id="<%= room.getHotelId() %>"
+                                            data-start-date="<%= room.getStartDate() != null ? room.getStartDate().toString() : "" %>"
+                                            data-end-date="<%= room.getEndDate() != null ? room.getEndDate().toString() : "" %>"
+                                            class="btn btn-primary">Approve Rental</button>
                                 </td>
                             </tr>
                             <%
@@ -121,11 +126,18 @@
         <h1></h1>
     </div>
    <script>
-       function approveRental(roomId) {
+       function approveRental(buttonElement) {
+           var roomId = buttonElement.getAttribute('data-room-id');
+           var startDate = buttonElement.getAttribute('data-start-date');
+           var endDate = buttonElement.getAttribute('data-end-date');
            var paymentMethodSelect = document.getElementById("paymentMethod" + roomId);
            var paymentMethod = paymentMethodSelect.value;
 
            var xhttp = new XMLHttpRequest();
+           if (!paymentMethod || paymentMethod === "") {
+              alert("Please select a valid payment method.");
+              return; // Stop the function if no valid payment method is selected
+          }
            xhttp.onreadystatechange = function() {
                if (this.readyState == 4 && this.status == 200) {
                    // Check for a successful response, you might need to adjust based on what approveRental.jsp returns
@@ -134,14 +146,14 @@
                        alert("Rental approved successfully!");
                        window.location.reload(); // Refresh the page to update the table
                    } else {
-                       alert("Failed to approve rental: " + response);
+                       alert("Error creating rental:");
                    }
                }
            };
            xhttp.open("POST", "approveRental.jsp", true);
            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
            // Correctly format the data to be sent in the POST request
-           xhttp.send(`roomId=${roomId}&paymentMethod=${paymentMethod}`);
+           xhttp.send(`roomId=${roomId}&paymentMethod=${paymentMethod}&startDate=${startDate}&endDate=${endDate}`);
        }
    </script>
    <script>
@@ -150,6 +162,12 @@
            var startDate = form["startDate"].value;
            var endDate = form["endDate"].value;
            var paymentMethod = form["paymentMethod"].value;
+
+           // Check if a valid payment method is selected
+           if (!paymentMethod || paymentMethod === "") {
+               alert("Please select a valid payment method.");
+               return; // Stop the function if no valid payment method is selected
+           }
 
            var xhttp = new XMLHttpRequest();
            xhttp.onreadystatechange = function() {
@@ -161,8 +179,9 @@
            };
            xhttp.open("POST", "createRental.jsp", true);
            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-           xhttp.send(`startDate=${startDate}&endDate=${endDate}&paymentMethod=${paymentMethod}`);
+           xhttp.send(`paymentMethod=${paymentMethod}&startDate=${startDate}&endDate=${endDate}`);
        }
+
    </script>
 
 
