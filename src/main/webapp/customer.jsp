@@ -100,7 +100,8 @@ today = sdf.parse(sdf.format(today)); // Resetting time to 00:00:00 for accurate
                                                 <option value="Ottawa">Ottawa</option>
                                                 <option value="Toronto">Toronto</option>
                                                 <option value="Montreal">Montreal</option>
-                                                <option value="San Sebastian">San Sebastian</option>
+                                                <option value="Vancouver">Vancouver</option>
+                                                <option value="Quebec">Quebec</option>
                                             </select>
                                             <label for="location">Location</label>
                                         </div>
