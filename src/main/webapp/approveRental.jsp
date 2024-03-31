@@ -13,8 +13,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%
-    // Initialize variables to hold parameters
-    System.out.println("fjf");
+
     int roomId = Integer.parseInt(request.getParameter("roomId"));
     String paymentMethod = request.getParameter("paymentMethod");
 

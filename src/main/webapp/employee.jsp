@@ -1,13 +1,16 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.sql.Connection, java.sql.PreparedStatement, java.sql.Statement, java.sql.ResultSet" %>
+<%@ page import="com.demo.ConnectionDB" %>
 <%@ page import="com.demo.RentService" %>
 <%@ page import="com.demo.RoomService" %>
 <%@ page import="com.demo.Room" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="java.util.Date" %>
 <%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.sql.Date" %>
 <%@ page import="java.text.ParseException" %>
-<%@ page import="java.util.Calendar" %>
+<%@ page import="java.sql.SQLException" %>
+<%@ page import="com.demo.Rent" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%
     RoomService roomService = new RoomService();
@@ -34,25 +37,41 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     <div class="container-fluid">
-        <!-- Title + Return To Home Button -->
         <div class="text-center">
-            <div class="row" style="padding: 20px">
-                <h3>Create a new renting</h3>
-                <div class="col">
-                    <form id="createRentalForm">
-                        Start Date: <input type="date" id="startDate" name="startDate" required><br>
-                        End Date: <input type="date" id="endDate" name="endDate" required><br>
-                        Payment Method:
-                        <select id="paymentMethod" name="paymentMethod" required>
-                            <option value="">Select Payment Type</option>
-                            <option value="card">Card</option>
-                            <option value="cash">Cash</option>
-                        </select><br>
-                        <button type="button" onclick="createRental()">Create Rental</button>
-                    </form>
-
+            <!-- Return To Home Button -->
+            <div class="row">
+                <div class="col-md-12" style="margin-top: 20px;">
+                    <a href="./index.jsp" class="btn btn-primary">Return Home</a>
                 </div>
             </div>
+        <div class="text-center">
+            <div class="row justify-content-center mt-4">
+                    <div class="col-md-8">
+                        <h3 class="mb-4">Create a New Renting</h3>
+                        <form id="createRentalForm" class="row g-3">
+                            <div class="col-md-6">
+                                <label for="startDate" class="form-label">Start Date:</label>
+                                <input type="date" class="form-control" id="startDate" name="startDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="endDate" class="form-label">End Date:</label>
+                                <input type="date" class="form-control" id="endDate" name="endDate" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="paymentMethod" class="form-label">Payment Method:</label>
+                                <select id="paymentMethod" name="paymentMethod" class="form-select" required>
+                                    <option value="">Select Payment Type</option>
+                                    <option value="card">Card</option>
+                                    <option value="cash">Cash</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <button type="button" class="btn btn-primary" onclick="createRental()">Create Rental</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
 
             <div class="row" style="padding: 20px">
                 <!-- Turn Bookings into Rentings -->
@@ -145,6 +164,8 @@
            xhttp.send(`startDate=${startDate}&endDate=${endDate}&paymentMethod=${paymentMethod}`);
        }
    </script>
+
+
 
 </body>
 </html>
