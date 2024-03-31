@@ -8,6 +8,7 @@ package com.demo;
 
 public class Hotel {
     private Integer id;
+    private String name;
     private Integer hotelChainId;
     private Integer category;
     private Integer numberOfRooms;
@@ -31,8 +32,9 @@ public class Hotel {
      * @param city City where the hotel is located.
      */
 
-    public Hotel(Integer id, Integer hotelChainId, Integer category, Integer numberOfRooms, String address, String email, String phone, String city) {
+    public Hotel(Integer id, String name, Integer hotelChainId, Integer category, Integer numberOfRooms, String address, String email, String phone, String city) {
         this.id = id;
+        this.name =name;
         this.hotelChainId = hotelChainId;
         this.category = category;
         this.numberOfRooms = numberOfRooms;
@@ -43,6 +45,8 @@ public class Hotel {
     }
 
     // Getters and Setters
+    public String getName() {return name; };
+    public void setName(String name) {this.name = name;}
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public Integer getHotelChainId() { return hotelChainId; }
@@ -64,6 +68,7 @@ public class Hotel {
     public String toString() {
         return "Hotel{" +
                 "id=" + id +
+                ", name=" + name +
                 ", hotelChainId=" + hotelChainId +
                 ", category=" + category +
                 ", numberOfRooms=" + numberOfRooms +
