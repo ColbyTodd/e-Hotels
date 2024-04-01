@@ -13,11 +13,12 @@ public class HotelService {
 
     public List<Hotel> getHotels() throws Exception {
         List<Hotel> hotels = new ArrayList<>();
-        String sql = "SELECT * FROM hotel";
+        String sql = "SELECT * FROM hotel ORDER BY id ASC";
         try (Connection con = db.getConnection(); PreparedStatement stmt = con.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 hotels.add(new Hotel(
                         rs.getInt("id"),
+                        rs.getString("name"),
                         rs.getInt("hotel_chain_id"),
                         rs.getInt("category"),
                         rs.getInt("number_of_rooms"),
@@ -33,35 +34,99 @@ public class HotelService {
         }
         return hotels;
     }
+    public Hotel getHotelById(int id) throws Exception {
+        Hotel hotel = null;
+        String sql = "SELECT * FROM hotel WHERE id = ?";
+        try (Connection con = db.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, id); // Set the ID parameter in the SQL query
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                hotel = new Hotel(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getInt("hotel_chain_id"),
+                        rs.getInt("category"),
+                        rs.getInt("number_of_rooms"),
+                        rs.getString("address"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getString("city"));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            throw new Exception("Error while retrieving hotel: " + e.getMessage());
+        } finally {
+            db.close();
+        }
+        return hotel;
+    }
 
     public String createHotel(Hotel hotel) throws Exception {
-        String sql = "INSERT INTO hotel (hotel_chain_id, category, number_of_rooms, address, email, phone, city) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        resetHotelPrimaryKeySequence();
+        String sql = "INSERT INTO hotel (name, hotel_chain_id, category, number_of_rooms, address, email, phone, city) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection con = db.getConnection(); PreparedStatement stmt = con.prepareStatement(sql)) {
-            stmt.setInt(1, hotel.getHotelChainId());
-            stmt.setInt(2, hotel.getCategory());
-            stmt.setInt(3, hotel.getNumberOfRooms());
-            stmt.setString(4, hotel.getAddress());
-            stmt.setString(5, hotel.getEmail());
-            stmt.setString(6, hotel.getPhone());
-            stmt.setString(7, hotel.getCity());
+            stmt.setString(1, hotel.getName());
+            stmt.setInt(2, hotel.getHotelChainId());
+            stmt.setInt(3, hotel.getCategory());
+            stmt.setInt(4, hotel.getNumberOfRooms());
+            stmt.setString(5, hotel.getAddress());
+            stmt.setString(6, hotel.getEmail());
+            stmt.setString(7, hotel.getPhone());
+            stmt.setString(8, hotel.getCity());
             stmt.executeUpdate();
             return "Hotel created successfully!";
         } catch (SQLException e) {
             return "Error while creating hotel: " + e.getMessage();
         }
     }
+    public void resetHotelPrimaryKeySequence() throws SQLException {
+        String maxIdQuery = "SELECT MAX(id) FROM hotel;";
+        String currValQuery = "SELECT last_value FROM hotel_id_seq;";
+        try (Connection con = db.getConnection();
+             PreparedStatement maxIdStmt = con.prepareStatement(maxIdQuery);
+             PreparedStatement currValStmt = con.prepareStatement(currValQuery)) {
+
+            ResultSet rsMaxId = maxIdStmt.executeQuery();
+            int maxId = 0;
+            if (rsMaxId.next()) {
+                maxId = rsMaxId.getInt(1);
+            }
+            rsMaxId.close();
+
+            ResultSet rsCurrVal = currValStmt.executeQuery();
+            int currVal = 0;
+            if (rsCurrVal.next()) {
+                currVal = rsCurrVal.getInt(1);
+            }
+            rsCurrVal.close();
+
+            if (currVal <= maxId) {
+                String resetSequenceSQL = "SELECT setval('hotel_id_seq', ?, false);";
+                try (PreparedStatement resetSeqStmt = con.prepareStatement(resetSequenceSQL)) {
+                    resetSeqStmt.setInt(1, maxId + 1);
+                    resetSeqStmt.execute();
+                }
+            }
+        } catch (Exception e) {
+            throw new SQLException("Error resetting primary key sequence for hotel table", e);
+        }
+    }
+
+
 
     public String updateHotel(Hotel hotel) throws Exception {
-        String sql = "UPDATE hotel SET hotel_chain_id=?, category=?, number_of_rooms=?, address=?, email=?, phone=?, city=? WHERE id=?";
+        String sql = "UPDATE hotel SET name=?, hotel_chain_id=?, category=?, number_of_rooms=?, address=?, email=?, phone=?, city=? WHERE id=?";
         try (Connection con = db.getConnection(); PreparedStatement stmt = con.prepareStatement(sql)) {
-            stmt.setInt(1, hotel.getHotelChainId());
-            stmt.setInt(2, hotel.getCategory());
-            stmt.setInt(3, hotel.getNumberOfRooms());
-            stmt.setString(4, hotel.getAddress());
-            stmt.setString(5, hotel.getEmail());
-            stmt.setString(6, hotel.getPhone());
-            stmt.setString(7, hotel.getCity());
-            stmt.setInt(8, hotel.getId());
+            stmt.setString(1, hotel.getName());
+            stmt.setInt(2, hotel.getHotelChainId());
+            stmt.setInt(3, hotel.getCategory());
+            stmt.setInt(4, hotel.getNumberOfRooms());
+            stmt.setString(5, hotel.getAddress());
+            stmt.setString(6, hotel.getEmail());
+            stmt.setString(7, hotel.getPhone());
+            stmt.setString(8, hotel.getCity());
+            stmt.setInt(9, hotel.getId());
             stmt.executeUpdate();
             return "Hotel updated successfully!";
         } catch (SQLException e) {

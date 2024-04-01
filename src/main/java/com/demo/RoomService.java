@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class RoomService {
+
     public List<Room> getSpecifiedRooms(Integer capacity, Integer maxPrice, Integer hotelChain, Integer size, Date startDate,
                                         Date endDate, Integer category, String city) throws Exception {
         List<Room> rooms = new ArrayList<>();
@@ -146,7 +147,8 @@ public class RoomService {
 
 
     public String createRoom(Room room) throws Exception {
-        String sql = "INSERT INTO room (hotel_id, hotel_chain_id, price, amenities, capacity, room_view, extendable, problems, room_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        resetRoomPrimaryKeySequence();
+        String sql = "INSERT INTO room (hotel_id, hotel_chain_id, price, amenities, capacity, room_view, extendable, problems, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         ConnectionDB db = new ConnectionDB();
         try (Connection con = db.getConnection(); PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setInt(1, room.getHotelId());
@@ -164,9 +166,43 @@ public class RoomService {
             return "Error while creating room: " + e.getMessage();
         }
     }
+    public void resetRoomPrimaryKeySequence() throws SQLException {
+        String maxIdQuery = "SELECT MAX(id) FROM room;";
+        String currValQuery = "SELECT last_value FROM room_id_seq;";
+        ConnectionDB db = new ConnectionDB();
+        try (Connection con = db.getConnection();
+             PreparedStatement maxIdStmt = con.prepareStatement(maxIdQuery);
+             PreparedStatement currValStmt = con.prepareStatement(currValQuery)) {
+
+            ResultSet rsMaxId = maxIdStmt.executeQuery();
+            int maxId = 0;
+            if (rsMaxId.next()) {
+                maxId = rsMaxId.getInt(1);
+            }
+            rsMaxId.close();
+
+            ResultSet rsCurrVal = currValStmt.executeQuery();
+            int currVal = 0;
+            if (rsCurrVal.next()) {
+                currVal = rsCurrVal.getInt(1);
+            }
+            rsCurrVal.close();
+
+            if (currVal <= maxId) {
+                String resetSequenceSQL = "SELECT setval('room_id_seq', ?, false);";
+                try (PreparedStatement resetSeqStmt = con.prepareStatement(resetSequenceSQL)) {
+                    resetSeqStmt.setInt(1, maxId + 1);
+                    resetSeqStmt.execute();
+                }
+            }
+        } catch (Exception e) {
+            throw new SQLException("Error resetting primary key sequence for room table", e);
+        }
+    }
+
 
     public String updateRoom(Room room) throws Exception {
-        String sql = "UPDATE room SET hotel_id=?, hotel_chain_id=?, price=?, amenities=?, capacity=?, room_view=?, extendable=?, problems=?, room_status=? WHERE id=?";
+        String sql = "UPDATE room SET hotel_id=?, hotel_chain_id=?, price=?, amenities=?, capacity=?, room_view=?, extendable=?, problems=?, status=? WHERE id=?";
         ConnectionDB db = new ConnectionDB();
         try (Connection con = db.getConnection(); PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setInt(1, room.getHotelId());
@@ -196,5 +232,62 @@ public class RoomService {
         } catch (SQLException e) {
             return "Error while deleting room: " + e.getMessage();
         }
+    }
+    public Room getRoomById(int id) throws Exception {
+        Room room = null;
+        String sql = "SELECT * FROM room WHERE id = ?";
+        ConnectionDB db = new ConnectionDB();
+        try (Connection con = db.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                room = new Room(
+                        rs.getInt("id"),
+                        rs.getInt("hotel_id"),
+                        rs.getInt("hotel_chain_id"),
+                        rs.getInt("price"),
+                        rs.getString("amenities"),
+                        rs.getInt("capacity"),
+                        rs.getString("room_view"),
+                        rs.getBoolean("extendable"),
+                        rs.getBoolean("problems"),
+                        rs.getBoolean("status")
+
+                );
+            }
+        } catch (Exception e) {
+            throw new Exception("Error while retrieving room with ID " + id + ": " + e.getMessage(), e);
+        }
+
+        return room;
+    }
+    public List<Room> getRooms() throws Exception {
+        ConnectionDB db = new ConnectionDB();
+        List<Room> rooms = new ArrayList<>();
+        String sql = "SELECT * FROM room ORDER BY id ASC";
+        try (Connection con = db.getConnection(); PreparedStatement stmt = con.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                rooms.add(new Room(
+                        rs.getInt("id"),
+                        rs.getInt("hotel_id"),
+                        rs.getInt("hotel_chain_id"),
+                        rs.getInt("price"),
+                        rs.getString("amenities"),
+                        rs.getInt("capacity"),
+                        rs.getString("room_view"),
+                        rs.getBoolean("extendable"),
+                        rs.getBoolean("problems"),
+                        rs.getBoolean("status")
+                ));
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error while retrieving rooms: " + e.getMessage());
+        } finally {
+            db.close();
+        }
+        return rooms;
     }
 }
