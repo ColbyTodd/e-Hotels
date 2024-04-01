@@ -63,6 +63,7 @@ public class HotelService {
     }
 
     public String createHotel(Hotel hotel) throws Exception {
+        resetHotelPrimaryKeySequence();
         String sql = "INSERT INTO hotel (name, hotel_chain_id, category, number_of_rooms, address, email, phone, city) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection con = db.getConnection(); PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setString(1, hotel.getName());
@@ -79,6 +80,40 @@ public class HotelService {
             return "Error while creating hotel: " + e.getMessage();
         }
     }
+    public void resetHotelPrimaryKeySequence() throws SQLException {
+        String maxIdQuery = "SELECT MAX(id) FROM hotel;";
+        String currValQuery = "SELECT last_value FROM hotel_id_seq;";
+        try (Connection con = db.getConnection();
+             PreparedStatement maxIdStmt = con.prepareStatement(maxIdQuery);
+             PreparedStatement currValStmt = con.prepareStatement(currValQuery)) {
+
+            ResultSet rsMaxId = maxIdStmt.executeQuery();
+            int maxId = 0;
+            if (rsMaxId.next()) {
+                maxId = rsMaxId.getInt(1);
+            }
+            rsMaxId.close();
+
+            ResultSet rsCurrVal = currValStmt.executeQuery();
+            int currVal = 0;
+            if (rsCurrVal.next()) {
+                currVal = rsCurrVal.getInt(1);
+            }
+            rsCurrVal.close();
+
+            if (currVal <= maxId) {
+                String resetSequenceSQL = "SELECT setval('hotel_id_seq', ?, false);";
+                try (PreparedStatement resetSeqStmt = con.prepareStatement(resetSequenceSQL)) {
+                    resetSeqStmt.setInt(1, maxId + 1);
+                    resetSeqStmt.execute();
+                }
+            }
+        } catch (Exception e) {
+            throw new SQLException("Error resetting primary key sequence for hotel table", e);
+        }
+    }
+
+
 
     public String updateHotel(Hotel hotel) throws Exception {
         String sql = "UPDATE hotel SET name=?, hotel_chain_id=?, category=?, number_of_rooms=?, address=?, email=?, phone=?, city=? WHERE id=?";

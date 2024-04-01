@@ -8,6 +8,10 @@
     <title>Employee Management</title>
 </head>
 <body>
+<div style="margin-top: 20px;">
+    <a href="index.jsp" class="btn btn-primary">Return Home</a>
+</div>
+
 <h2>Add New Employee</h2>
 <form action="createEmployee.jsp" method="post">
     Hotel ID: <input type="number" name="hotelId" required /><br />

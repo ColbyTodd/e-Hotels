@@ -9,6 +9,10 @@
     <title>Create Customer</title>
 </head>
 <body>
+<div style="margin-top: 20px;">
+    <a href="index.jsp" class="btn btn-primary">Return Home</a>
+</div>
+
 <%-- Simple form for creating a new customer --%>
 <form action="db_customer.jsp" method="post">
     Full Name: <input type="text" name="fullName" /><br />

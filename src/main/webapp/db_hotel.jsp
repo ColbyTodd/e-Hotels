@@ -7,6 +7,10 @@
     <title>Hotel Management</title>
 </head>
 <body>
+<div style="margin-top: 20px;">
+    <a href="index.jsp" class="btn btn-primary">Return Home</a>
+</div>
+
 <h2>Add New Hotel</h2>
 <form action="createHotel.jsp" method="post">
     Name: <input type="text" name="name" required /><br />

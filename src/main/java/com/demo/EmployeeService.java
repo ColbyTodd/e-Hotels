@@ -63,6 +63,7 @@ public class EmployeeService {
 
 
     public String createEmployee(Employee employee) throws Exception {
+        resetEmployeePrimaryKeySequence();
         String sql = "INSERT INTO employee (hotel_id, hotel_chain_id, sin, full_name, address, role) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection con = db.getConnection(); PreparedStatement stmt = con.prepareStatement(sql)) {
 
@@ -78,6 +79,39 @@ public class EmployeeService {
             return "Error while creating employee: " + e.getMessage();
         }
     }
+    public void resetEmployeePrimaryKeySequence() throws SQLException {
+        String maxIdQuery = "SELECT MAX(id) FROM employee;";
+        String currValQuery = "SELECT last_value FROM employee_id_seq;";
+        try (Connection con = db.getConnection();
+             PreparedStatement maxIdStmt = con.prepareStatement(maxIdQuery);
+             PreparedStatement currValStmt = con.prepareStatement(currValQuery)) {
+
+            ResultSet rsMaxId = maxIdStmt.executeQuery();
+            int maxId = 0;
+            if (rsMaxId.next()) {
+                maxId = rsMaxId.getInt(1);
+            }
+            rsMaxId.close();
+
+            ResultSet rsCurrVal = currValStmt.executeQuery();
+            int currVal = 0;
+            if (rsCurrVal.next()) {
+                currVal = rsCurrVal.getInt(1);
+            }
+            rsCurrVal.close();
+
+            if (currVal <= maxId) {
+                String resetSequenceSQL = "SELECT setval('employee_id_seq', ?, false);";
+                try (PreparedStatement resetSeqStmt = con.prepareStatement(resetSequenceSQL)) {
+                    resetSeqStmt.setInt(1, maxId + 1);
+                    resetSeqStmt.execute();
+                }
+            }
+        } catch (Exception e) {
+            throw new SQLException("Error resetting primary key sequence for employee table", e);
+        }
+    }
+
 
     public String updateEmployee(Employee employee) throws Exception {
         String sql = "UPDATE employee SET hotel_id=?, hotel_chain_id=?, sin=?, full_name=?, address=?, role=? WHERE id=?";
